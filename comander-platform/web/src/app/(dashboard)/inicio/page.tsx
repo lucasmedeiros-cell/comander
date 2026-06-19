@@ -3,7 +3,7 @@
 import * as React from 'react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
-import { ArrowRight, Building2, ShoppingBag, ShoppingCart, Sparkles, Wallet } from 'lucide-react';
+import { ArrowRight, Building2, ShoppingBag, ShoppingCart, Sparkles } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Money } from '@/components/ui/money';
@@ -32,22 +32,35 @@ export default function InicioPage() {
   const { selected, selectedId, setSelectedBusiness } = useSelectedBusiness(businesses);
   const loading = !useMounted();
 
-  // Toda la información del Home se calcula SOLO para la empresa seleccionada.
+  // Tarjeta principal (FIJA): consolidado de TODAS las empresas. No cambia al
+  // seleccionar una empresa; solo depende del periodo.
+  const overviewAll = React.useMemo(
+    () => computeOverview(businesses, transactions, range),
+    [businesses, transactions, range]
+  );
+
+  // Tarjetas centrales + IA: SOLO la empresa seleccionada.
   const perf = React.useMemo(
     () => (selected ? computePerformance([selected], transactions, range)[0] : null),
     [selected, transactions, range]
   );
-  const overview = React.useMemo(
+  const overviewSel = React.useMemo(
     () => (selected ? computeOverview([selected], transactions, range) : null),
     [selected, transactions, range]
   );
-  const insights = React.useMemo(() => (overview ? buildInsights(overview).slice(0, 2) : []), [overview]);
+  const insights = React.useMemo(() => (overviewSel ? buildInsights(overviewSel).slice(0, 2) : []), [overviewSel]);
 
   const periodLabel = PERIODS.find((p) => p.key === range)?.label ?? 'Hoy';
-  const ventas = perf?.ingresos ?? 0;
-  const compras = perf?.egresos ?? 0;
-  const ganancia = perf?.rentabilidad ?? 0;
-  const gananciaPositiva = ganancia >= 0;
+
+  // Consolidado (tarjeta principal fija)
+  const ventasTotal = overviewAll.ingresosTotales;
+  const comprasTotal = overviewAll.egresosTotales;
+  const gananciaTotal = overviewAll.utilidad;
+  const gananciaPositiva = gananciaTotal >= 0;
+
+  // Empresa seleccionada (tarjetas centrales)
+  const ventasSel = perf?.ingresos ?? 0;
+  const comprasSel = perf?.egresos ?? 0;
 
   // Sin empresas → invitación a crear la primera.
   if (!loading && businesses.length === 0) {
@@ -90,7 +103,7 @@ export default function InicioPage() {
                   Ganancia · {periodLabel}
                 </p>
                 <p className="mt-0.5 truncate text-sm font-medium text-white/70">
-                  {selected?.nombre ?? '—'}
+                  Todas las empresas · {businesses.length}
                 </p>
               </div>
               <div className="flex shrink-0 items-center gap-1 rounded-full bg-white/5 p-1 ring-1 ring-white/10">
@@ -117,21 +130,21 @@ export default function InicioPage() {
                 gananciaPositiva ? 'text-emerald-400' : 'text-rose-400'
               )}
             >
-              <Money value={ganancia} count />
+              <Money value={gananciaTotal} count />
             </p>
 
-            {/* Ventas + Compras (apoyo) */}
+            {/* Ventas + Compras consolidadas (apoyo) */}
             <div className="mt-7 grid grid-cols-2 gap-4">
               <div className="rounded-2xl bg-white/5 p-4 ring-1 ring-white/10">
                 <p className="text-[10px] font-medium uppercase tracking-[0.18em] text-white/45">Ventas</p>
                 <p className="mt-1 text-2xl font-bold tabular-nums text-white">
-                  <Money value={ventas} count />
+                  <Money value={ventasTotal} count />
                 </p>
               </div>
               <div className="rounded-2xl bg-white/5 p-4 ring-1 ring-white/10">
                 <p className="text-[10px] font-medium uppercase tracking-[0.18em] text-white/45">Compras</p>
                 <p className="mt-1 text-2xl font-bold tabular-nums text-white">
-                  <Money value={compras} count />
+                  <Money value={comprasTotal} count />
                 </p>
               </div>
             </div>
@@ -139,14 +152,20 @@ export default function InicioPage() {
         </div>
       </motion.div>
 
-      {/* ───────── 2 · TARJETAS CENTRALES (Ventas · Compras) ───────── */}
-      <div className="grid grid-cols-2 gap-4">
-        <Card className="p-5 sm:p-6">
-          <StatBlock orientation="col" size="xl" icon={ShoppingCart} label="Ventas" value={ventas} accent="#2D7EFF" />
-        </Card>
-        <Card className="p-5 sm:p-6">
-          <StatBlock orientation="col" size="xl" icon={ShoppingBag} label="Compras" value={compras} accent="#F59E0B" />
-        </Card>
+      {/* ───────── 2 · TARJETAS CENTRALES (Ventas · Compras de la empresa elegida) ───────── */}
+      <div className="space-y-3">
+        <div className="flex items-center gap-2">
+          <span className="h-4 w-1 rounded-full" style={{ background: selected?.color ?? '#2D7EFF' }} />
+          <h2 className="truncate text-sm font-bold tracking-tight">{selected?.nombre ?? 'Empresa'}</h2>
+        </div>
+        <div className="grid grid-cols-2 gap-4">
+          <Card className="p-5 sm:p-6">
+            <StatBlock orientation="col" size="xl" icon={ShoppingCart} label="Ventas" value={ventasSel} accent="#2D7EFF" />
+          </Card>
+          <Card className="p-5 sm:p-6">
+            <StatBlock orientation="col" size="xl" icon={ShoppingBag} label="Compras" value={comprasSel} accent="#F59E0B" />
+          </Card>
+        </div>
       </div>
 
       {/* ───────── 3 · CARRUSEL DE EMPRESAS (selector) ───────── */}

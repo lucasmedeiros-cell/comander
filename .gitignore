@@ -25,3 +25,6 @@ dist/
 Thumbs.db
 *.log
 npm-debug.log*
+
+# Instaladores/binarios sueltos
+*.exe

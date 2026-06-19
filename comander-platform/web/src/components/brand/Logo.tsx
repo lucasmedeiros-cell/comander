@@ -4,32 +4,27 @@ import Image from 'next/image';
 import { cn } from '@/lib/utils';
 
 interface LogoProps {
-  size?: number;
-  showText?: boolean;
+  /** Alto en px del logo; el ancho se calcula con la proporción de la imagen. */
+  height?: number;
   className?: string;
 }
 
+// Proporción real del archivo de marca (≈ 1.6:1).
+const RATIO = 1.6;
+
 /**
- * Logo de COMANDER. Usa el archivo de marca en /public/logo.png.
- * El fondo navy (#010512) se funde con el borde del logo.
+ * Logo de COMANDER (/public/logo.png) mostrado COMPLETO (object-contain), de modo
+ * que se vean sus letras internas. Sin texto adicional al lado: el propio logo es
+ * la marca. El fondo navy se funde con el del logo.
  */
-export function Logo({ size = 34, showText = true, className }: LogoProps) {
+export function Logo({ height = 40, className }: LogoProps) {
+  const width = Math.round(height * RATIO);
   return (
-    <div className={cn('flex items-center gap-2.5', className)}>
-      <div
-        className="relative shrink-0 overflow-hidden rounded-[10px] ring-1 ring-white/10"
-        style={{ width: size, height: size }}
-      >
-        <Image src="/logo.png" alt="COMANDER" fill sizes="40px" className="object-cover" priority />
-      </div>
-      {showText && (
-        <div className="flex flex-col leading-none">
-          <span className="text-[15px] font-bold tracking-[0.14em] text-foreground">COMANDER</span>
-          <span className="text-[8.5px] uppercase tracking-[0.22em] text-muted-foreground">
-            Control Empresarial
-          </span>
-        </div>
-      )}
+    <div
+      className={cn('relative shrink-0 overflow-hidden rounded-xl bg-[#070b18] ring-1 ring-white/10', className)}
+      style={{ width, height }}
+    >
+      <Image src="/logo.png" alt="COMANDER" fill sizes={`${width}px`} className="object-contain" priority />
     </div>
   );
 }

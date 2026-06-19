@@ -20,15 +20,15 @@ export default function LoginPage() {
   const [phone, setPhone] = React.useState('');
   const [submitting, setSubmitting] = React.useState(false);
 
-  const digits = phone.replace(/\D/g, '');
-  const valid = digits.length >= 7;
+  // Solo 8 dígitos (Bolivia, prefijo fijo +591).
+  const valid = phone.length === 8;
 
   function onSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!valid || submitting) return;
     setSubmitting(true);
     // Modo demo: el teléfono identifica la sesión. Entra directo al panel.
-    login(`${digits}@comander.app`);
+    login(`591${phone}@comander.app`);
     router.replace('/inicio');
   }
 
@@ -54,38 +54,37 @@ export default function LoginPage() {
         transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
         className="relative z-10 w-full max-w-md text-center"
       >
-        {/* ── Branding protagonista ── */}
+        {/* ── Logo protagonista (completo, con sus letras) ── */}
         <div className="flex flex-col items-center">
           <motion.div
             initial={{ opacity: 0, scale: 0.9, y: 8 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
-            className="relative h-40 w-64 overflow-hidden rounded-3xl bg-[#070b18] ring-1 ring-white/10 shadow-2xl"
+            className="relative h-56 w-[22rem] max-w-full overflow-hidden rounded-3xl bg-[#070b18] ring-1 ring-white/10 shadow-2xl"
           >
-            <Image src="/logo.png" alt="COMANDER" fill sizes="256px" className="object-contain" priority />
+            <Image src="/logo.png" alt="COMANDER" fill sizes="352px" className="object-contain" priority />
           </motion.div>
-
-          <h1 className="mt-8 text-4xl font-extrabold tracking-[0.18em] text-white sm:text-5xl">COMANDER</h1>
-          <p className="mt-2 text-sm uppercase tracking-[0.26em] text-white/45">
-            Centro de Inteligencia Empresarial
-          </p>
         </div>
 
-        {/* ── Formulario mínimo: teléfono ── */}
-        <form onSubmit={onSubmit} className="mx-auto mt-12 max-w-sm space-y-4 text-left">
+        {/* ── Formulario mínimo: teléfono (+591, 8 dígitos) ── */}
+        <form onSubmit={onSubmit} className="mx-auto mt-10 max-w-sm space-y-4 text-left">
           <div className="space-y-1.5">
             <Label htmlFor="phone" className="text-white/70">Número de teléfono</Label>
-            <div className="relative">
-              <Phone className="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-white/40" />
+            <div className="flex h-14 items-center rounded-2xl border border-white/10 bg-white/5 transition-colors focus-within:border-brand/60 focus-within:bg-white/10">
+              <span className="flex items-center gap-2 pl-4 pr-3 text-sm font-medium text-white/70">
+                <Phone className="h-4 w-4 text-white/40" /> +591
+              </span>
+              <span className="h-6 w-px bg-white/10" />
               <input
                 id="phone"
                 type="tel"
-                inputMode="tel"
-                autoComplete="tel"
+                inputMode="numeric"
+                autoComplete="tel-national"
                 value={phone}
-                onChange={(e) => setPhone(e.target.value)}
-                placeholder="+58 412 000 0000"
-                className="h-14 w-full rounded-2xl border border-white/10 bg-white/5 pl-12 pr-4 text-lg text-white outline-none transition-colors placeholder:text-white/30 focus:border-brand/60 focus:bg-white/10"
+                onChange={(e) => setPhone(e.target.value.replace(/\D/g, '').slice(0, 8))}
+                maxLength={8}
+                placeholder="7000 0000"
+                className="h-full flex-1 bg-transparent px-4 text-base tracking-wide text-white outline-none placeholder:text-white/30"
               />
             </div>
           </div>

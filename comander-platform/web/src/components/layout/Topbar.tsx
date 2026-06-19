@@ -15,12 +15,12 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog';
-import { NAV, titleForPath } from './nav-config';
+import { Dialog, DialogContent, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { titleForPath } from './nav-config';
+import { NavLinks } from './NavLinks';
 import { Logo } from '@/components/brand/Logo';
 import { useAuth } from '@/lib/store';
 import { iniciales } from '@/lib/format';
-import { cn } from '@/lib/utils';
 
 function Clock() {
   const [now, setNow] = React.useState<Date | null>(null);
@@ -59,33 +59,25 @@ export function Topbar() {
             <Menu className="h-4 w-4" />
           </Button>
         </DialogTrigger>
-        <DialogContent className="left-0 top-0 h-full max-w-[260px] translate-x-0 translate-y-0 rounded-none rounded-r-2xl">
-          <div className="mb-2"><Logo /></div>
-          <nav className="space-y-4">
-            {NAV.map((s) => (
-              <div key={s.title}>
-                <p className="px-2 pb-1.5 text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">
-                  {s.title}
-                </p>
-                {s.items.map(({ href, label, icon: Icon }) => {
-                  const active = pathname === href || pathname.startsWith(href + '/');
-                  return (
-                    <Link
-                      key={href}
-                      href={href}
-                      onClick={() => setMobileOpen(false)}
-                      className={cn(
-                        'flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium',
-                        active ? 'bg-primary/10 text-primary' : 'text-muted-foreground hover:bg-accent'
-                      )}
-                    >
-                      <Icon className="h-[18px] w-[18px]" />
-                      {label}
-                    </Link>
-                  );
-                })}
-              </div>
-            ))}
+        <DialogContent className="left-0 top-0 flex h-full max-w-[280px] translate-x-0 translate-y-0 flex-col gap-0 rounded-none rounded-r-2xl p-0 data-[state=closed]:slide-out-to-left data-[state=open]:slide-in-from-left">
+          <DialogTitle className="sr-only">Menú de navegación</DialogTitle>
+
+          {/* Header centrado: logo grande + subtítulo */}
+          <div className="flex flex-col items-center px-6 pb-6 pt-10 text-center">
+            <Logo height={104} />
+            <p className="mt-4 text-[10px] font-medium uppercase leading-relaxed tracking-[0.22em] text-muted-foreground">
+              Centro de Inteligencia
+              <br />
+              Empresarial
+            </p>
+          </div>
+
+          {/* Navegación */}
+          <nav className="flex-1 overflow-y-auto px-4">
+            <p className="px-3 pb-2.5 text-center text-[9.5px] font-semibold uppercase tracking-[0.2em] text-muted-foreground/60">
+              Navegación
+            </p>
+            <NavLinks onNavigate={() => setMobileOpen(false)} layoutId="mobile-nav-active" stagger />
           </nav>
         </DialogContent>
       </Dialog>

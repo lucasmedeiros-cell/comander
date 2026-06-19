@@ -1,15 +1,14 @@
-// Formateadores en español (es-CO por defecto; moneda USD genérica configurable).
+// Formateadores en español (es-CO por defecto; moneda "Bs").
 
-const CURRENCY = 'USD';
+const CURRENCY_PREFIX = 'Bs';
 
 export function money(value: number, opts?: { compact?: boolean; decimals?: number }): string {
   const { compact = false, decimals } = opts ?? {};
-  return new Intl.NumberFormat('es-CO', {
-    style: 'currency',
-    currency: CURRENCY,
+  const n = new Intl.NumberFormat('es-CO', {
     notation: compact ? 'compact' : 'standard',
     maximumFractionDigits: decimals ?? (compact ? 1 : 0),
   }).format(value);
+  return `${CURRENCY_PREFIX} ${n}`;
 }
 
 export function number(value: number, compact = false): string {

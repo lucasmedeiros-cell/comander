@@ -79,8 +79,8 @@ export default function CopilotoPage() {
     <div className="space-y-6">
       <PageHeader
         size="lg"
-        title="Copiloto IA"
-        subtitle="Tu asistente ejecutivo. Pregunta en lenguaje natural y recibe respuestas y recomendaciones sobre todas tus empresas."
+        title="IA Empresarial"
+        subtitle="Tu asistente ejecutivo. Pregunta en lenguaje natural sobre tus ventas, compras, ganancias y tendencias, y recibe respuestas al instante."
       />
 
       <div className="grid gap-6 lg:grid-cols-3">

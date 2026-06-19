@@ -4,6 +4,7 @@ import * as React from 'react';
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import type { Business, BusinessApiConfig, BusinessEvent, BusinessEventType } from '@/types';
+import { useUi } from '@/lib/store';
 
 // ───────────────────────────────────────────────────────────────────────────
 // Store central de gestión de empresas.
@@ -211,4 +212,19 @@ export function useVisibleBusinesses(base: Business[]): Business[] {
   const all = useResolvedBusinesses(base);
   const hidden = useBusinessStore((s) => s.hidden);
   return React.useMemo(() => all.filter((b) => !hidden.includes(b.id)), [all, hidden]);
+}
+
+/**
+ * Empresa seleccionada que controla todo el Home. Resuelve el id guardado en
+ * `useUi` contra la lista visible; si no hay selección válida, usa la primera.
+ * Devuelve también el setter para cambiarla desde el carrusel/selector.
+ */
+export function useSelectedBusiness(visible: Business[]) {
+  const selectedId = useUi((s) => s.selectedBusinessId);
+  const setSelectedBusiness = useUi((s) => s.setSelectedBusiness);
+  const selected = React.useMemo(
+    () => visible.find((b) => b.id === selectedId) ?? visible[0] ?? null,
+    [visible, selectedId]
+  );
+  return { selected, selectedId: selected?.id ?? null, setSelectedBusiness };
 }

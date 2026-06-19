@@ -1,18 +1,4 @@
-import {
-  AlertTriangle,
-  BarChart3,
-  Building2,
-  FileText,
-  Home,
-  Plug,
-  Settings,
-  Sparkles,
-  TrendingDown,
-  TrendingUp,
-  Trophy,
-  Users,
-  type LucideIcon,
-} from 'lucide-react';
+import { Building2, Home, Settings, Sparkles, type LucideIcon } from 'lucide-react';
 
 export interface NavItem {
   href: string;
@@ -26,31 +12,14 @@ export interface NavSection {
   items: NavItem[];
 }
 
+// Menú minimalista (Centro de Mando): solo lo esencial para decidir rápido.
 export const NAV: NavSection[] = [
   {
     title: 'Navegación',
     items: [
       { href: '/inicio', label: 'Inicio', icon: Home },
       { href: '/empresas', label: 'Empresas', icon: Building2 },
-      { href: '/ingresos', label: 'Ventas', icon: TrendingUp },
-      { href: '/egresos', label: 'Compras', icon: TrendingDown },
-      { href: '/rentabilidad', label: 'Rentabilidad', icon: Trophy },
-    ],
-  },
-  {
-    title: 'Análisis',
-    items: [
-      { href: '/copiloto', label: 'Copiloto IA', icon: Sparkles },
-      { href: '/reportes', label: 'Reportes', icon: FileText },
-      { href: '/analitica', label: 'Analítica', icon: BarChart3 },
-      { href: '/alertas', label: 'Alertas', icon: AlertTriangle, badgeKey: 'alertas' },
-    ],
-  },
-  {
-    title: 'Sistema',
-    items: [
-      { href: '/integraciones', label: 'Integraciones', icon: Plug },
-      { href: '/usuarios', label: 'Usuarios y Roles', icon: Users },
+      { href: '/copiloto', label: 'IA Empresarial', icon: Sparkles },
       { href: '/configuracion', label: 'Configuración', icon: Settings },
     ],
   },

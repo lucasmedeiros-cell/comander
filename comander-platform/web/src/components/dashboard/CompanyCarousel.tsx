@@ -1,45 +1,72 @@
 'use client';
 
 import * as React from 'react';
-import Link from 'next/link';
 import { motion } from 'framer-motion';
-import { ChevronLeft, ChevronRight, ShoppingBag, ShoppingCart, Wallet } from 'lucide-react';
+import { Check, ChevronLeft, ChevronRight } from 'lucide-react';
 import type { ApiStatus, Business } from '@/types';
 import { iniciales } from '@/lib/format';
-import { StatBlock } from '@/components/dashboard/StatBlock';
 import { cn } from '@/lib/utils';
 
-export interface CarouselItem {
-  business: Business;
-  ventas: number;
-  compras: number;
-  ganancia: number;
-}
-
-// Semáforo de estado por empresa (spec): 🟢 Conectada · 🟡 Atención · 🔴 Error.
-const STATUS: Record<ApiStatus, { label: string; dot: string; text: string; emoji: string }> = {
-  CONNECTED: { label: 'Conectada', dot: '#10B981', text: 'text-success', emoji: '🟢' },
-  DISCONNECTED: { label: 'Atención', dot: '#F59E0B', text: 'text-warning', emoji: '🟡' },
-  ERROR: { label: 'Error', dot: '#EF4444', text: 'text-danger', emoji: '🔴' },
+// Semáforo de estado por empresa: 🟢 Conectada · 🟡 Atención · 🔴 Error.
+const STATUS: Record<ApiStatus, { label: string; dot: string; text: string }> = {
+  CONNECTED: { label: 'Conectada', dot: '#10B981', text: 'text-success' },
+  DISCONNECTED: { label: 'Atención', dot: '#F59E0B', text: 'text-warning' },
+  ERROR: { label: 'Error', dot: '#EF4444', text: 'text-danger' },
 };
 
+interface CompanyCarouselProps {
+  businesses: Business[];
+  selectedId: string | null;
+  onSelect: (id: string) => void;
+}
+
 /**
- * Carrusel horizontal de empresas para el Inicio.
- *  • Móvil: swipe nativo con scroll-snap suave.
- *  • Desktop: flechas para desplazar; el logo es protagonista.
+ * Carrusel SELECTOR de empresas (parte inferior del Home). Su única función es
+ * elegir la empresa activa: al tocar una tarjeta se actualiza todo el Home.
+ * Muestra solo lo esencial — logo, nombre y estado — sin datos numéricos.
+ *  • Móvil: swipe/drag con scroll-snap.
+ *  • Desktop: flechas. Si hay muchas empresas, se desliza automáticamente.
  */
-export function CompanyCarousel({ items }: { items: CarouselItem[] }) {
+export function CompanyCarousel({ businesses, selectedId, onSelect }: CompanyCarouselProps) {
   const trackRef = React.useRef<HTMLDivElement>(null);
 
-  const scrollByCards = (dir: 1 | -1) => {
+  const scrollByCards = React.useCallback((dir: 1 | -1) => {
     const el = trackRef.current;
     if (!el) return;
     const card = el.querySelector<HTMLElement>('[data-card]');
-    const amount = card ? card.offsetWidth + 16 : el.clientWidth * 0.8;
+    const amount = card ? card.offsetWidth + 12 : el.clientWidth * 0.8;
     el.scrollBy({ left: dir * amount, behavior: 'smooth' });
-  };
+  }, []);
 
-  if (items.length === 0) return null;
+  // Auto-desplazamiento suave cuando hay muchas empresas (se pausa al interactuar).
+  React.useEffect(() => {
+    const el = trackRef.current;
+    if (!el || businesses.length <= 4) return;
+    let paused = false;
+    const pause = () => {
+      paused = true;
+    };
+    const resume = () => {
+      paused = false;
+    };
+    el.addEventListener('pointerenter', pause);
+    el.addEventListener('pointerdown', pause);
+    el.addEventListener('pointerleave', resume);
+    const t = setInterval(() => {
+      if (paused) return;
+      const atEnd = el.scrollLeft + el.clientWidth >= el.scrollWidth - 4;
+      if (atEnd) el.scrollTo({ left: 0, behavior: 'smooth' });
+      else scrollByCards(1);
+    }, 3200);
+    return () => {
+      clearInterval(t);
+      el.removeEventListener('pointerenter', pause);
+      el.removeEventListener('pointerdown', pause);
+      el.removeEventListener('pointerleave', resume);
+    };
+  }, [businesses.length, scrollByCards]);
+
+  if (businesses.length === 0) return null;
 
   return (
     <div className="relative">
@@ -63,75 +90,55 @@ export function CompanyCarousel({ items }: { items: CarouselItem[] }) {
 
       <div
         ref={trackRef}
-        className="flex snap-x snap-mandatory gap-4 overflow-x-auto scroll-smooth pb-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+        className="flex snap-x snap-mandatory gap-3 overflow-x-auto scroll-smooth pb-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
       >
-        {items.map(({ business: b, ventas, compras, ganancia }, i) => {
+        {businesses.map((b, i) => {
           const st = STATUS[b.apiStatus];
-          const gananciaPositiva = ganancia >= 0;
+          const active = b.id === selectedId;
           return (
-            <motion.div
+            <motion.button
               key={b.id}
               data-card
-              layout
-              initial={{ opacity: 0, scale: 0.96 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: i * 0.06, ease: [0.16, 1, 0.3, 1], layout: { duration: 0.35 } }}
-              className="w-[78%] shrink-0 snap-start sm:w-[300px]"
+              type="button"
+              onClick={() => onSelect(b.id)}
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: Math.min(i, 8) * 0.05, ease: [0.16, 1, 0.3, 1] }}
+              whileTap={{ scale: 0.97 }}
+              className={cn(
+                'group relative w-[46%] shrink-0 snap-start rounded-2xl border bg-card p-4 text-left transition-all sm:w-[210px]',
+                active
+                  ? 'border-primary ring-2 ring-primary/30 shadow-lg'
+                  : 'border-border hover:border-primary/40 hover:shadow-md'
+              )}
             >
-              <Link
-                href={`/empresas/detalle?id=${b.id}`}
-                className="group block h-full overflow-hidden rounded-2xl border border-border bg-card transition-all hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-lg"
-              >
-                <div className="h-1.5" style={{ background: b.color }} />
-                <div className="p-5">
-                  {/* Logo de marca + semáforo de estado (encabezado compacto) */}
-                  <div className="flex items-center justify-between">
-                    {b.logo ? (
-                      // eslint-disable-next-line @next/next/no-img-element
-                      <img
-                        src={b.logo}
-                        alt={b.nombre}
-                        className="h-12 w-12 rounded-xl border border-border object-cover"
-                      />
-                    ) : (
-                      <span
-                        className="grid h-12 w-12 place-items-center rounded-xl text-base font-extrabold text-white"
-                        style={{ background: b.color }}
-                      >
-                        {iniciales(b.nombre)}
-                      </span>
-                    )}
-                    <span
-                      className={cn(
-                        'inline-flex items-center gap-1.5 rounded-full bg-muted/60 px-2.5 py-1 text-xs font-semibold',
-                        st.text
-                      )}
-                    >
-                      <span className="h-2 w-2 rounded-full" style={{ background: st.dot }} />
-                      {st.label}
-                    </span>
-                  </div>
+              {active && (
+                <span className="absolute right-3 top-3 grid h-5 w-5 place-items-center rounded-full bg-primary text-primary-foreground">
+                  <Check className="h-3 w-3" />
+                </span>
+              )}
+              {/* Logo */}
+              {b.logo ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img src={b.logo} alt={b.nombre} className="h-14 w-14 rounded-xl border border-border object-cover" />
+              ) : (
+                <span
+                  className="grid h-14 w-14 place-items-center rounded-xl text-lg font-extrabold text-white"
+                  style={{ background: b.color }}
+                >
+                  {iniciales(b.nombre)}
+                </span>
+              )}
 
-                  {/* Jerarquía invertida: ÍCONO → MONTO → TÍTULO (Ventas · Compras · Ganancia) */}
-                  <div className="mt-5 space-y-4">
-                    <StatBlock icon={ShoppingCart} label="Ventas" value={ventas} accent="#2D7EFF" />
-                    <StatBlock icon={ShoppingBag} label="Compras" value={compras} accent="#F59E0B" />
-                    <StatBlock
-                      icon={Wallet}
-                      label={gananciaPositiva ? 'Ganancia' : 'Pérdida'}
-                      value={ganancia}
-                      accent={gananciaPositiva ? '#10B981' : '#EF4444'}
-                      valueClassName={gananciaPositiva ? 'text-success' : 'text-danger'}
-                    />
-                  </div>
+              {/* Nombre */}
+              <p className="mt-3 truncate text-sm font-semibold text-foreground">{b.nombre}</p>
 
-                  {/* Nombre — último en la jerarquía visual */}
-                  <p className="mt-4 truncate border-t border-border pt-3 text-sm font-medium text-muted-foreground">
-                    {b.nombre}
-                  </p>
-                </div>
-              </Link>
-            </motion.div>
+              {/* Estado */}
+              <span className={cn('mt-1 inline-flex items-center gap-1.5 text-xs font-medium', st.text)}>
+                <span className="h-2 w-2 rounded-full" style={{ background: st.dot }} />
+                {st.label}
+              </span>
+            </motion.button>
           );
         })}
       </div>

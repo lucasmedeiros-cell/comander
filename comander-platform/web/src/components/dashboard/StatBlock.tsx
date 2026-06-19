@@ -26,9 +26,11 @@ interface StatBlockProps {
   valueClassName?: string;
   /** Trata el valor como dinero (se oculta en modo privacidad). */
   money?: boolean;
-  /** Notación compacta (US$1,2 mil). Por defecto muestra el monto completo. */
+  /** Notación compacta (Bs 1,2 mil). Por defecto muestra el monto completo. */
   compact?: boolean;
-  size?: 'sm' | 'md' | 'lg';
+  size?: 'sm' | 'md' | 'lg' | 'xl';
+  /** 'row' = ícono a la izquierda · 'col' = ícono arriba (tarjetas centrales). */
+  orientation?: 'row' | 'col';
   className?: string;
 }
 
@@ -36,6 +38,7 @@ const SIZES = {
   sm: { tile: 'h-11 w-11', icon: 'h-6 w-6', value: 'text-xl', label: 'text-[10px]' },
   md: { tile: 'h-12 w-12', icon: 'h-6 w-6', value: 'text-2xl', label: 'text-[11px]' },
   lg: { tile: 'h-14 w-14', icon: 'h-7 w-7', value: 'text-3xl', label: 'text-xs' },
+  xl: { tile: 'h-16 w-16', icon: 'h-8 w-8', value: 'text-4xl', label: 'text-xs' },
 } as const;
 
 export function StatBlock({
@@ -47,11 +50,14 @@ export function StatBlock({
   money = true,
   compact = false,
   size = 'sm',
+  orientation = 'row',
   className,
 }: StatBlockProps) {
   const s = SIZES[size];
+  const col = orientation === 'col';
+
   return (
-    <div className={cn('flex items-center gap-3', className)}>
+    <div className={cn('flex gap-3', col ? 'flex-col items-start' : 'items-center', className)}>
       {/* 1 · Ícono grande (protagonista) */}
       <span
         className={cn('grid shrink-0 place-items-center rounded-2xl', s.tile)}
@@ -60,7 +66,7 @@ export function StatBlock({
         <Icon className={s.icon} />
       </span>
 
-      <div className="min-w-0 flex-1">
+      <div className={cn('min-w-0', !col && 'flex-1')}>
         {/* 2 · Monto grande con CountUp al entrar al viewport */}
         <span
           className={cn(
@@ -77,7 +83,7 @@ export function StatBlock({
         </span>
 
         {/* 3 · Título pequeño (último en la jerarquía) */}
-        <span className={cn('mt-1 block font-medium uppercase tracking-[0.14em] text-muted-foreground', s.label)}>
+        <span className={cn('mt-1.5 block font-medium uppercase tracking-[0.14em] text-muted-foreground', s.label)}>
           {label}
         </span>
       </div>

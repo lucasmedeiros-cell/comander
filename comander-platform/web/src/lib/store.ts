@@ -39,16 +39,21 @@ export const useAuth = create<AuthState>()(
 
 interface UiState {
   sidebarCollapsed: boolean;
+  /** Empresa seleccionada que controla todo el Home (null = aún sin elegir). */
+  selectedBusinessId: string | null;
   toggleSidebar: () => void;
   setSidebar: (v: boolean) => void;
+  setSelectedBusiness: (id: string | null) => void;
 }
 
 export const useUi = create<UiState>()(
   persist(
     (set) => ({
       sidebarCollapsed: false,
+      selectedBusinessId: null,
       toggleSidebar: () => set((s) => ({ sidebarCollapsed: !s.sidebarCollapsed })),
       setSidebar: (v) => set({ sidebarCollapsed: v }),
+      setSelectedBusiness: (selectedBusinessId) => set({ selectedBusinessId }),
     }),
     { name: 'comander-ui' }
   )

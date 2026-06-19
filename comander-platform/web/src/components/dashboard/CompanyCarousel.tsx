@@ -79,7 +79,7 @@ export function CompanyCarousel({ items }: { items: CarouselItem[] }) {
               className="w-[78%] shrink-0 snap-start sm:w-[300px]"
             >
               <Link
-                href={`/empresas/${b.id}`}
+                href={`/empresas/detalle?id=${b.id}`}
                 className="group block h-full overflow-hidden rounded-2xl border border-border bg-card transition-all hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-lg"
               >
                 <div className="h-1.5" style={{ background: b.color }} />

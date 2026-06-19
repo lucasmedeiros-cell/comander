@@ -138,7 +138,7 @@ function EmpresaCard({
               >
                 <GripVertical className="h-4 w-4" />
               </button>
-              <Link href={`/empresas/${b.id}`} className="flex min-w-0 items-center gap-3">
+              <Link href={`/empresas/detalle?id=${b.id}`} className="flex min-w-0 items-center gap-3">
                 {b.logo ? (
                   // eslint-disable-next-line @next/next/no-img-element
                   <img src={b.logo} alt={b.nombre} className="h-11 w-11 shrink-0 rounded-xl border border-border object-cover" />
@@ -188,7 +188,7 @@ function EmpresaCard({
 
           <div className="mt-auto flex items-center gap-2 pt-5">
             <Button asChild size="sm" variant="secondary" className="flex-1">
-              <Link href={`/empresas/${b.id}`}>
+              <Link href={`/empresas/detalle?id=${b.id}`}>
                 <Eye className="h-3.5 w-3.5" /> Ver detalle
               </Link>
             </Button>

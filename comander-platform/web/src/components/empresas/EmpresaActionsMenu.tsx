@@ -83,7 +83,7 @@ export function EmpresaActionsMenu({
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align={align} onClick={(e) => e.stopPropagation()}>
-          <DropdownMenuItem onSelect={() => router.push(`/empresas/${business.id}`)}>
+          <DropdownMenuItem onSelect={() => router.push(`/empresas/detalle?id=${business.id}`)}>
             <Eye /> Ver detalle
           </DropdownMenuItem>
           <DropdownMenuItem onSelect={() => setSheet('edit')}>

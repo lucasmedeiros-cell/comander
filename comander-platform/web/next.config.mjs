@@ -1,14 +1,13 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
-  // Proxy /api → backend NestJS. Solo se activa si NEXT_PUBLIC_API_URL está definido
-  // (en local apuntando a :3000). En Netlify/demo no se define, así que no se intenta
-  // ningún proxy a localhost y el sitio funciona 100% con datos mock.
-  async rewrites() {
-    const api = process.env.NEXT_PUBLIC_API_URL;
-    if (!api) return [];
-    return [{ source: '/api/:path*', destination: `${api}/api/:path*` }];
-  },
+  // Export 100% estático: el sitio funciona solo con datos demo (sin backend),
+  // así Netlify sirve archivos estáticos y SIEMPRE carga (sin runtime SSR que
+  // pueda fallar). El detalle de empresa usa query param (/empresas/detalle?id=…),
+  // por eso no hay rutas dinámicas que requieran servidor.
+  output: 'export',
+  // next/image necesita un servidor para optimizar; en export se desactiva.
+  images: { unoptimized: true },
 };
 
 export default nextConfig;

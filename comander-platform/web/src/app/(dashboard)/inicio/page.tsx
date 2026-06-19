@@ -284,7 +284,7 @@ export default function InicioPage() {
                 return (
                   <Link
                     key={p.business.id}
-                    href={`/empresas/${p.business.id}`}
+                    href={`/empresas/detalle?id=${p.business.id}`}
                     className="flex items-center gap-3 rounded-xl p-2 transition-colors hover:bg-accent"
                   >
                     <span className="h-8 w-1 rounded-full" style={{ background: p.business.color }} />

@@ -2,7 +2,7 @@
 
 import * as React from 'react';
 import Link from 'next/link';
-import { useParams, useRouter } from 'next/navigation';
+import { useSearchParams, useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import {
   ArrowLeft,
@@ -34,8 +34,25 @@ import { SYNC_FREQUENCY_LABEL } from '@/lib/empresas';
 import { fechaHora, haceCuanto, iniciales, number } from '@/lib/format';
 import { cn } from '@/lib/utils';
 
+/**
+ * Detalle de empresa por QUERY PARAM (`/empresas/detalle?id=…`).
+ *
+ * Se usa query param en vez de ruta dinámica para que el sitio sea 100% estático
+ * (export en Netlify) y funcione con CUALQUIER id, incluidas las empresas creadas
+ * en runtime (que viven en localStorage). `useSearchParams` exige un límite de
+ * Suspense para el prerender estático.
+ */
 export default function EmpresaDetallePage() {
-  const { id } = useParams<{ id: string }>();
+  return (
+    <React.Suspense fallback={<div className="min-h-[60vh]" />}>
+      <EmpresaDetalleContent />
+    </React.Suspense>
+  );
+}
+
+function EmpresaDetalleContent() {
+  const searchParams = useSearchParams();
+  const id = searchParams.get('id') ?? '';
   const router = useRouter();
   const { businesses: base, transactions } = useDataset();
   const all = useResolvedBusinesses(base);

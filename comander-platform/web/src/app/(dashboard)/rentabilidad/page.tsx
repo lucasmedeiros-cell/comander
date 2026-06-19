@@ -80,7 +80,7 @@ export default function RentabilidadPage() {
                 transition={{ delay: Math.min(i, 8) * 0.05 }}
               >
                 <Link
-                  href={`/empresas/${p.business.id}`}
+                  href={`/empresas/detalle?id=${p.business.id}`}
                   className="flex items-center gap-4 rounded-xl border border-border p-3 transition-colors hover:bg-accent"
                 >
                   <span

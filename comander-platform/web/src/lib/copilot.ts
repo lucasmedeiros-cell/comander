@@ -310,7 +310,7 @@ export function buildAdvice(ctx: CopilotContext): Advice[] {
       observation: `${losing.business.nombre} está operando con pérdidas.`,
       suggestion: 'Revisa su estructura de costos y pausa gastos no esenciales.',
       severity: 'alta',
-      href: `/empresas/${losing.business.id}`,
+      href: `/empresas/detalle?id=${losing.business.id}`,
       cta: 'Ver empresa',
     });
   }

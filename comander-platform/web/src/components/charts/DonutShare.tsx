@@ -19,11 +19,12 @@ function DonutShareImpl({ data, height = 240 }: { data: DonutDatum[]; height?: n
   const mounted = useMounted();
   const animationsEnabled = useMotionEnabled();
   const maskedMoney = useMaskedMoney();
+  // Detecta la entrada al viewport para RE-formar el donut al hacer scroll.
   const [ref, inView] = useInViewOnce<HTMLDivElement>();
   const total = data.reduce((a, b) => a + b.value, 0);
-  // El círculo se "dibuja" al entrar al viewport, pero los datos se renderizan
-  // SIEMPRE (no se difiere el montaje → nunca queda en blanco).
-  const animate = animationsEnabled && inView;
+  // El donut se renderiza SIEMPRE y se DIBUJA gradualmente al montarse; al entrar
+  // al viewport se remonta (key) para volver a formarse al hacer scroll.
+  const animate = animationsEnabled;
   const hasData = Array.isArray(data) && data.length > 0 && total > 0;
 
   if (!mounted) return <Skeleton style={{ height }} className="w-full" />;
@@ -33,7 +34,7 @@ function DonutShareImpl({ data, height = 240 }: { data: DonutDatum[]; height?: n
     <div ref={ref} className="flex flex-col items-center gap-4 sm:flex-row">
       <div className="relative" style={{ width: height, height }}>
         <ResponsiveContainer width="100%" height="100%">
-            <PieChart key={animate ? 'anim' : 'static'}>
+            <PieChart key={inView ? 'in' : 'pre'}>
               <Pie
                 data={data}
                 dataKey="value"

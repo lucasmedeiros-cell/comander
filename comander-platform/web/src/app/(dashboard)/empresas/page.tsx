@@ -3,7 +3,7 @@
 import * as React from 'react';
 import Link from 'next/link';
 import { Reorder, useDragControls } from 'framer-motion';
-import { Eye, EyeOff, GripVertical, Plug, RefreshCw } from 'lucide-react';
+import { Eye, EyeOff, GripVertical, Plug, RefreshCw, ShoppingBag, ShoppingCart, Wallet } from 'lucide-react';
 import { toast } from 'sonner';
 import { PageHeader } from '@/components/dashboard/PageHeader';
 import { Card } from '@/components/ui/card';
@@ -11,10 +11,10 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { EmpresaFormDialog } from '@/components/empresas/EmpresaFormDialog';
 import { EmpresaActionsMenu } from '@/components/empresas/EmpresaActionsMenu';
+import { StatBlock } from '@/components/dashboard/StatBlock';
 import { useDataset } from '@/lib/data-provider';
 import { useBusinessStore, useResolvedBusinesses } from '@/lib/business-store';
 import { computePerformance } from '@/lib/metrics';
-import { Money } from '@/components/ui/money';
 import { API_STATUS } from '@/lib/labels';
 import { haceCuanto, iniciales } from '@/lib/format';
 import type { Business, BusinessPerformance } from '@/types';
@@ -174,13 +174,15 @@ function EmpresaCard({
 
           <p className="mt-3 text-[11px] text-muted-foreground">Última sincronización: {haceCuanto(b.lastSync)}</p>
 
-          <div className="mt-4 grid grid-cols-3 gap-2">
-            <Metric label="Ventas" value={perf?.ingresos ?? 0} color="text-brand" />
-            <Metric label="Compras" value={perf?.egresos ?? 0} color="text-warning" />
-            <Metric
-              label="Ganancia"
+          <div className="mt-4 space-y-4">
+            <StatBlock icon={ShoppingCart} label="Ventas" value={perf?.ingresos ?? 0} accent="#2D7EFF" />
+            <StatBlock icon={ShoppingBag} label="Compras" value={perf?.egresos ?? 0} accent="#F59E0B" />
+            <StatBlock
+              icon={Wallet}
+              label={(perf?.rentabilidad ?? 0) >= 0 ? 'Ganancia' : 'Pérdida'}
               value={perf?.rentabilidad ?? 0}
-              color={(perf?.rentabilidad ?? 0) >= 0 ? 'text-success' : 'text-danger'}
+              accent={(perf?.rentabilidad ?? 0) >= 0 ? '#10B981' : '#EF4444'}
+              valueClassName={(perf?.rentabilidad ?? 0) >= 0 ? 'text-success' : 'text-danger'}
             />
           </div>
 
@@ -197,16 +199,5 @@ function EmpresaCard({
         </div>
       </Card>
     </Reorder.Item>
-  );
-}
-
-function Metric({ label, value, color }: { label: string; value: number; color: string }) {
-  return (
-    <div className="rounded-lg bg-muted/40 p-2.5">
-      <p className="text-[10px] uppercase tracking-wide text-muted-foreground">{label}</p>
-      <p className={cn('mt-0.5 text-sm font-bold', color)}>
-        <Money value={value} compact />
-      </p>
-    </div>
   );
 }

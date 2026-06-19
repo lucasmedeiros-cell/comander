@@ -28,12 +28,14 @@ function BarsByBusinessImpl({ data, height = 300, name = 'Valor', color = '#2D7E
   const mounted = useMounted();
   const animationsEnabled = useMotionEnabled();
   const balancesHidden = useBalancesHidden();
+  // Detecta la entrada al viewport para RE-formar las barras al hacer scroll.
   const [ref, inView] = useInViewOnce<HTMLDivElement>();
 
   // Datos siempre visibles si existen; estado vacío elegante en caso contrario.
   const hasData = Array.isArray(data) && data.some((d) => Number.isFinite(d.value) && d.value !== 0);
-  // Las barras crecen de 0 a su valor real al entrar al viewport (sin diferir datos).
-  const animate = animationsEnabled && inView;
+  // Las barras se renderizan SIEMPRE y CRECEN de 0 a su valor al montarse; al
+  // entrar al viewport se remontan (key) para volver a crecer al hacer scroll.
+  const animate = animationsEnabled;
 
   if (!mounted) return <Skeleton style={{ height }} className="w-full" />;
   if (!hasData) return <div ref={ref}><ChartEmpty height={height} /></div>;
@@ -44,7 +46,7 @@ function BarsByBusinessImpl({ data, height = 300, name = 'Valor', color = '#2D7E
     <div ref={ref} style={{ width: '100%', height }}>
       <ResponsiveContainer width="100%" height={height}>
       <BarChart
-        key={animate ? 'anim' : 'static'}
+        key={inView ? 'in' : 'pre'}
         data={data}
         layout={layout}
         margin={{ top: 8, right: 12, left: vertical ? 8 : -8, bottom: 0 }}

@@ -3,7 +3,7 @@
 import * as React from 'react';
 import { motion } from 'framer-motion';
 import { useTheme } from 'next-themes';
-import { Check, EyeOff, Moon, Palette, Sparkles, Sun } from 'lucide-react';
+import { Check, EyeOff, Moon, Palette, PlayCircle, Sparkles, Sun } from 'lucide-react';
 import { PageHeader } from '@/components/dashboard/PageHeader';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Switch } from '@/components/ui/switch';
@@ -123,12 +123,6 @@ export default function ConfiguracionPage() {
                   onChange={setAnimationsEnabled}
                 />
                 <SettingRow
-                  title="Mostrar Intro al Iniciar Sesión"
-                  desc="Si está activo, reproduce el video de introducción; si no, entra directo al panel."
-                  checked={mounted ? introEnabled : true}
-                  onChange={setIntroEnabled}
-                />
-                <SettingRow
                   title="Habilitar Reportes"
                   desc="Muestra el módulo de reportes en la navegación."
                   checked={mounted ? reportsEnabled : false}
@@ -140,6 +134,27 @@ export default function ConfiguracionPage() {
                   icon={<EyeOff className="h-4 w-4" />}
                   checked={mounted ? balancesHidden : false}
                   onChange={setBalancesHidden}
+                />
+              </CardContent>
+            </Card>
+
+            {/* Experiencia de Inicio */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2 text-base">
+                  <PlayCircle className="h-4 w-4 text-primary" /> Experiencia de Inicio
+                </CardTitle>
+                <p className="text-xs text-muted-foreground">
+                  Controla qué ocurre al abrir la aplicación, antes de iniciar sesión.
+                </p>
+              </CardHeader>
+              <CardContent>
+                <SettingRow
+                  title="Mostrar Video de Introducción"
+                  desc="ON: reproduce el video de introducción automáticamente. OFF: abre el Login directamente."
+                  icon={<PlayCircle className="h-4 w-4" />}
+                  checked={mounted ? introEnabled : true}
+                  onChange={setIntroEnabled}
                 />
               </CardContent>
             </Card>

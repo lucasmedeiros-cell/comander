@@ -74,12 +74,11 @@ export default function LoginPage() {
         role: normalizeRole(res.user.role),
       };
       setSession(user, res.accessToken);
-      toast.success('Bienvenido a COMANDER · backend en vivo');
+      // Sin mensaje emergente: entramos directo al panel, sin interrupciones.
       router.replace('/inicio');
     } catch {
-      // 2) Si el backend no está disponible, entramos en modo demo.
+      // 2) Si el backend no está disponible, entramos en modo demo (sin toast).
       login(data.email);
-      toast.success('Bienvenido a COMANDER · modo demo');
       router.replace('/inicio');
     }
   }
@@ -87,7 +86,6 @@ export default function LoginPage() {
   function social(provider: string) {
     // Stub de OAuth — en producción redirige al backend NestJS (/api/auth/oauth/...).
     login(`${provider.toLowerCase()}@comander.com`);
-    toast.success(`Sesión iniciada con ${provider}`);
     router.replace('/inicio');
   }
 
@@ -163,33 +161,25 @@ export default function LoginPage() {
           transition={{ duration: 0.5 }}
           className="w-full max-w-sm"
         >
-          {/* Logo protagonista con glow corporativo y animación de entrada. */}
+          {/* Logo protagonista (completo, sin recortes) con glow corporativo. */}
           <div className="mb-8 flex flex-col items-center text-center">
             <div className="relative grid place-items-center">
               <motion.div
                 aria-hidden
-                className="absolute h-40 w-40 rounded-full bg-brand/30 blur-[70px]"
-                animate={{ opacity: [0.45, 0.8, 0.45], scale: [0.9, 1.12, 0.9] }}
+                className="absolute h-44 w-56 rounded-[2rem] bg-brand/30 blur-[70px]"
+                animate={{ opacity: [0.45, 0.8, 0.45], scale: [0.9, 1.1, 0.9] }}
                 transition={{ duration: 3.2, repeat: Infinity }}
               />
               <motion.div
-                initial={{ opacity: 0, scale: 0.8, y: 8 }}
+                initial={{ opacity: 0, scale: 0.9, y: 8 }}
                 animate={{ opacity: 1, scale: 1, y: 0 }}
                 transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
-                className="relative h-24 w-24 overflow-hidden rounded-3xl ring-1 ring-white/10 shadow-2xl"
+                className="relative h-28 w-44 overflow-hidden rounded-2xl bg-[#070b18] ring-1 ring-white/10 shadow-2xl"
               >
-                <Image src="/logo.png" alt="COMANDER" fill sizes="96px" className="object-cover" priority />
+                <Image src="/logo.png" alt="COMANDER" fill sizes="176px" className="object-contain" priority />
               </motion.div>
             </div>
-            <motion.span
-              initial={{ opacity: 0, y: 8 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.15, duration: 0.5 }}
-              className="mt-4 text-2xl font-extrabold tracking-[0.18em] text-foreground"
-            >
-              COMANDER
-            </motion.span>
-            <span className="mt-0.5 text-[10px] uppercase tracking-[0.28em] text-muted-foreground">
+            <span className="mt-4 text-[10px] uppercase tracking-[0.28em] text-muted-foreground">
               Centro de Mando Empresarial
             </span>
           </div>

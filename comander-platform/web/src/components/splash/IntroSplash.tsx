@@ -26,9 +26,8 @@ const VIDEO_FALLBACK = '/intro.mp4';
 const DESKTOP_MIN_WIDTH = 1024;
 const FADE_OUT_MS = 500;
 
-// Logs temporales de diagnóstico (resolución · dispositivo · video elegido).
-// Cambiar a `false` una vez validado el flujo en móvil y escritorio.
-const INTRO_DEBUG = true;
+// Logs de diagnóstico (resolución · dispositivo · video elegido). Desactivados.
+const INTRO_DEBUG = false;
 const dlog = (...args: unknown[]) => {
   if (INTRO_DEBUG) console.log('%c[intro]', 'color:#2D7EFF;font-weight:bold', ...args);
 };
@@ -54,7 +53,7 @@ interface IntroSplashProps {
   onComplete: () => void;
 }
 
-type Phase = 'loading' | 'awaiting-gesture' | 'playing';
+type Phase = 'loading' | 'playing';
 
 export function IntroSplash({ onComplete }: IntroSplashProps) {
   const videoRef = React.useRef<HTMLVideoElement>(null);
@@ -95,7 +94,9 @@ export function IntroSplash({ onComplete }: IntroSplashProps) {
   const finishRef = React.useRef(finish);
   finishRef.current = finish;
 
-  // Reproduce con sonido; si el navegador bloquea el autoplay, pide un gesto.
+  // Reproducción 100% automática (sin botones). Se intenta con sonido; si el
+  // navegador bloquea el autoplay con audio, se reintenta EN SILENCIO sin
+  // interrumpir la experiencia. Si tampoco fuera posible, se avanza al Login.
   const playWithSound = React.useCallback(async () => {
     const video = videoRef.current;
     if (!video || startedRef.current) return;
@@ -108,9 +109,16 @@ export function IntroSplash({ onComplete }: IntroSplashProps) {
       dlog('reproducción iniciada (con sonido)');
       setPhase('playing');
     } catch {
-      dlog('autoplay con sonido bloqueado → mostrando "Iniciar Experiencia"');
-      startedRef.current = false; // permite que el gesto inicie la reproducción
-      setPhase('awaiting-gesture');
+      // Autoplay con sonido bloqueado → reproducir en silencio automáticamente.
+      try {
+        video.muted = true;
+        await video.play();
+        dlog('autoplay con sonido bloqueado → reproduciendo en silencio (sin interrumpir)');
+        setPhase('playing');
+      } catch {
+        dlog('reproducción no disponible → avanzando a Login sin interrumpir');
+        finishRef.current();
+      }
     }
   }, []);
 
@@ -179,19 +187,6 @@ export function IntroSplash({ onComplete }: IntroSplashProps) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [src]);
 
-  const handleGesture = React.useCallback(() => {
-    const video = videoRef.current;
-    if (!video) return;
-    startedRef.current = true;
-    introStarted = true;
-    video.muted = false;
-    video.volume = 1;
-    void video.play().then(() => {
-      dlog('usuario inició la experiencia (con sonido)');
-      setPhase('playing');
-    });
-  }, []);
-
   const showLoader = phase === 'loading';
 
   return (
@@ -206,9 +201,7 @@ export function IntroSplash({ onComplete }: IntroSplashProps) {
           playsInline
           preload="auto"
           initial={{ opacity: 0 }}
-          animate={{
-            opacity: fadeOut ? 0 : phase === 'playing' ? 1 : phase === 'awaiting-gesture' ? 0.35 : 0,
-          }}
+          animate={{ opacity: fadeOut ? 0 : phase === 'playing' ? 1 : 0 }}
           transition={{ duration: fadeOut ? FADE_OUT_MS / 1000 : 0.6, ease: 'easeOut' }}
           className="max-h-full max-w-full object-contain"
           style={{ width: '100%', height: '100%' }}
@@ -216,22 +209,6 @@ export function IntroSplash({ onComplete }: IntroSplashProps) {
           <source src={src} type="video/mp4" />
         </motion.video>
       )}
-
-      {/* Botón "Iniciar Experiencia" si el navegador bloquea el autoplay con audio. */}
-      <AnimatePresence>
-        {phase === 'awaiting-gesture' && (
-          <motion.button
-            type="button"
-            onClick={handleGesture}
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0 }}
-            className="absolute z-20 flex items-center gap-2 rounded-full bg-white/95 px-7 py-3.5 text-sm font-semibold text-black shadow-2xl backdrop-blur transition-transform hover:scale-[1.03] active:scale-95"
-          >
-            <PlayIcon /> Iniciar Experiencia
-          </motion.button>
-        )}
-      </AnimatePresence>
 
       {/* Loader elegante mientras precarga el video. */}
       <AnimatePresence>
@@ -277,13 +254,5 @@ export function IntroSplash({ onComplete }: IntroSplashProps) {
         )}
       </AnimatePresence>
     </div>
-  );
-}
-
-function PlayIcon() {
-  return (
-    <svg viewBox="0 0 24 24" className="h-4 w-4" fill="currentColor" aria-hidden>
-      <path d="M8 5v14l11-7z" />
-    </svg>
   );
 }

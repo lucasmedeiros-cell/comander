@@ -184,7 +184,7 @@ export default function InicioPage() {
             </Link>
           </div>
           <CompanyCarousel
-            items={perf.map((p) => ({ business: p.business, ventas: p.ingresos, ganancia: p.rentabilidad }))}
+            items={perf.map((p) => ({ business: p.business, ventas: p.ingresos, compras: p.egresos, ganancia: p.rentabilidad }))}
           />
         </Reveal>
       )}
@@ -292,7 +292,7 @@ export default function InicioPage() {
                       <div className="flex items-center justify-between">
                         <p className="truncate text-sm font-medium">{p.business.nombre}</p>
                         <span className={cn('text-sm font-semibold', p.rentabilidad >= 0 ? 'text-success' : 'text-danger')}>
-                          <Money value={p.rentabilidad} compact />
+                          <Money value={p.rentabilidad} compact count />
                         </span>
                       </div>
                       <div className="mt-1 h-1.5 overflow-hidden rounded-full bg-muted">
@@ -330,7 +330,7 @@ function BestWorstCard({ tone, overview }: { tone: 'best' | 'worst'; overview: R
           </div>
           <p className="mt-3 truncate text-lg font-bold">{data?.nombre ?? '—'}</p>
           <p className={cn('text-sm font-medium', isBest ? 'text-success' : 'text-danger')}>
-            {data ? <Money value={data.rentabilidad} compact /> : '—'} de rentabilidad
+            {data ? <Money value={data.rentabilidad} compact count /> : '—'} de rentabilidad
           </p>
           <ArrowUpRight className="absolute bottom-3 right-3 h-4 w-4 text-muted-foreground/40 transition-colors group-hover:text-primary" />
         </Card>

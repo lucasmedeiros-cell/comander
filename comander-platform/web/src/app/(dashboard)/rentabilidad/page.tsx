@@ -68,7 +68,7 @@ export default function RentabilidadPage() {
         <Card className="lg:col-span-2">
           <CardHeader>
             <CardTitle className="text-base">Ranking de empresas</CardTitle>
-            <p className="text-xs text-muted-foreground">Rentabilidad total del periodo: <span className="font-semibold text-foreground"><Money value={totalRent} /></span></p>
+            <p className="text-xs text-muted-foreground">Rentabilidad total del periodo: <span className="font-semibold text-foreground"><Money value={totalRent} count /></span></p>
           </CardHeader>
           <CardContent className="space-y-2">
             {ranking.map((p, i) => (
@@ -100,7 +100,7 @@ export default function RentabilidadPage() {
                   </div>
                   <div className="text-right">
                     <p className={cn('text-sm font-bold', p.rentabilidad >= 0 ? 'text-success' : 'text-danger')}>
-                      <Money value={p.rentabilidad} compact />
+                      <Money value={p.rentabilidad} compact count />
                     </p>
                     <DeltaBadge value={p.trend} className="mt-0.5" />
                   </div>

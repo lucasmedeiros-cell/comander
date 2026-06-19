@@ -3,15 +3,16 @@
 import * as React from 'react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { ChevronLeft, ChevronRight, ShoppingBag, ShoppingCart, Wallet } from 'lucide-react';
 import type { ApiStatus, Business } from '@/types';
 import { iniciales } from '@/lib/format';
-import { Money } from '@/components/ui/money';
+import { StatBlock } from '@/components/dashboard/StatBlock';
 import { cn } from '@/lib/utils';
 
 export interface CarouselItem {
   business: Business;
   ventas: number;
+  compras: number;
   ganancia: number;
 }
 
@@ -64,7 +65,7 @@ export function CompanyCarousel({ items }: { items: CarouselItem[] }) {
         ref={trackRef}
         className="flex snap-x snap-mandatory gap-4 overflow-x-auto scroll-smooth pb-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
       >
-        {items.map(({ business: b, ventas, ganancia }, i) => {
+        {items.map(({ business: b, ventas, compras, ganancia }, i) => {
           const st = STATUS[b.apiStatus];
           const gananciaPositiva = ganancia >= 0;
           return (
@@ -83,18 +84,18 @@ export function CompanyCarousel({ items }: { items: CarouselItem[] }) {
               >
                 <div className="h-1.5" style={{ background: b.color }} />
                 <div className="p-5">
-                  {/* 1 · Logo protagonista */}
-                  <div className="flex items-start justify-between">
+                  {/* Logo de marca + semáforo de estado (encabezado compacto) */}
+                  <div className="flex items-center justify-between">
                     {b.logo ? (
                       // eslint-disable-next-line @next/next/no-img-element
                       <img
                         src={b.logo}
                         alt={b.nombre}
-                        className="h-20 w-20 rounded-2xl border border-border object-cover"
+                        className="h-12 w-12 rounded-xl border border-border object-cover"
                       />
                     ) : (
                       <span
-                        className="grid h-20 w-20 place-items-center rounded-2xl text-2xl font-extrabold text-white"
+                        className="grid h-12 w-12 place-items-center rounded-xl text-base font-extrabold text-white"
                         style={{ background: b.color }}
                       >
                         {iniciales(b.nombre)}
@@ -111,26 +112,21 @@ export function CompanyCarousel({ items }: { items: CarouselItem[] }) {
                     </span>
                   </div>
 
-                  {/* 2 · Ventas (número protagonista) */}
-                  <div className="mt-5">
-                    <p className="text-[10px] uppercase tracking-wide text-muted-foreground">Ventas</p>
-                    <p className="text-3xl font-extrabold leading-tight tracking-tight text-foreground">
-                      <Money value={ventas} compact />
-                    </p>
+                  {/* Jerarquía invertida: ÍCONO → MONTO → TÍTULO (Ventas · Compras · Ganancia) */}
+                  <div className="mt-5 space-y-4">
+                    <StatBlock icon={ShoppingCart} label="Ventas" value={ventas} accent="#2D7EFF" />
+                    <StatBlock icon={ShoppingBag} label="Compras" value={compras} accent="#F59E0B" />
+                    <StatBlock
+                      icon={Wallet}
+                      label={gananciaPositiva ? 'Ganancia' : 'Pérdida'}
+                      value={ganancia}
+                      accent={gananciaPositiva ? '#10B981' : '#EF4444'}
+                      valueClassName={gananciaPositiva ? 'text-success' : 'text-danger'}
+                    />
                   </div>
 
-                  {/* 3 · Ganancia */}
-                  <div className="mt-2">
-                    <p className="text-[10px] uppercase tracking-wide text-muted-foreground">
-                      {gananciaPositiva ? 'Ganancia' : 'Pérdida'}
-                    </p>
-                    <p className={cn('text-lg font-bold tracking-tight', gananciaPositiva ? 'text-success' : 'text-danger')}>
-                      <Money value={ganancia} compact />
-                    </p>
-                  </div>
-
-                  {/* 4 · Nombre (texto secundario) */}
-                  <p className="mt-3 truncate border-t border-border pt-3 text-sm font-medium text-muted-foreground">
+                  {/* Nombre — último en la jerarquía visual */}
+                  <p className="mt-4 truncate border-t border-border pt-3 text-sm font-medium text-muted-foreground">
                     {b.nombre}
                   </p>
                 </div>

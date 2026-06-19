@@ -42,6 +42,7 @@ function TrendAreaImpl({ data, height = 300, series = ['ingresos', 'egresos'] }:
   const mounted = useMounted();
   const animationsEnabled = useMotionEnabled();
   const balancesHidden = useBalancesHidden();
+  // Detecta la entrada al viewport para RE-formar la gráfica al hacer scroll.
   const [ref, inView] = useInViewOnce<HTMLDivElement>();
 
   // Validación de datos: la gráfica SIEMPRE muestra datos si existen; si no,
@@ -51,9 +52,10 @@ function TrendAreaImpl({ data, height = 300, series = ['ingresos', 'egresos'] }:
     data.length > 0 &&
     data.some((d) => series.some((s) => Number.isFinite(d[s]) && d[s] !== 0));
 
-  // La animación de "dibujado" se dispara al entrar al viewport, pero los datos
-  // se renderizan SIEMPRE (no se difiere el montaje → nunca se queda vacía).
-  const animate = animationsEnabled && inView;
+  // La gráfica se renderiza SIEMPRE (nunca queda en blanco). El área/línea se
+  // DIBUJA desde cero al montarse (efecto "formándose"); además, cuando entra al
+  // viewport se remonta (key) para volver a dibujarse al hacer scroll.
+  const animate = animationsEnabled;
 
   if (!mounted) return <Skeleton style={{ height }} className="w-full" />;
   if (!hasData) return <div ref={ref}><ChartEmpty height={height} /></div>;
@@ -61,7 +63,7 @@ function TrendAreaImpl({ data, height = 300, series = ['ingresos', 'egresos'] }:
   return (
     <div ref={ref} style={{ width: '100%', height }}>
       <ResponsiveContainer width="100%" height={height}>
-      <AreaChart key={animate ? 'anim' : 'static'} data={data} margin={{ top: 10, right: 8, left: -8, bottom: 0 }}>
+      <AreaChart key={inView ? 'in' : 'pre'} data={data} margin={{ top: 10, right: 8, left: -8, bottom: 0 }}>
         <defs>
           {series.map((s) => (
             <linearGradient key={s} id={`grad-${s}`} x1="0" y1="0" x2="0" y2="1">

@@ -24,13 +24,14 @@ import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { EmpresaActionsMenu } from '@/components/empresas/EmpresaActionsMenu';
 import { Money } from '@/components/ui/money';
+import { AnimatedNumber } from '@/components/ui/animated-number';
 import { DEMO_ALERTS, DEMO_INTEGRATIONS } from '@/lib/mock-data';
 import { useDataset } from '@/lib/data-provider';
 import { useBusinessStore, useResolvedBusinesses } from '@/lib/business-store';
 import { aggregateSeries, computePerformance } from '@/lib/metrics';
 import { API_STATUS, INTEGRATION_LABEL } from '@/lib/labels';
 import { SYNC_FREQUENCY_LABEL } from '@/lib/empresas';
-import { fechaHora, haceCuanto, iniciales } from '@/lib/format';
+import { fechaHora, haceCuanto, iniciales, number } from '@/lib/format';
 import { cn } from '@/lib/utils';
 
 export default function EmpresaDetallePage() {
@@ -255,7 +256,7 @@ export default function EmpresaDetallePage() {
                 </div>
                 <span className={cn('text-sm font-semibold', t.type === 'INCOME' ? 'text-success' : 'text-warning')}>
                   {t.type === 'INCOME' ? '+' : '−'}
-                  <Money value={t.amount} />
+                  <Money value={t.amount} count />
                 </span>
               </div>
             ))}
@@ -282,13 +283,17 @@ function BigStat({
   money?: boolean;
 }) {
   const inner = (
-    <div className="flex flex-col gap-1 bg-card p-5 transition-colors hover:bg-accent/40">
-      <span className="inline-flex items-center gap-1.5 text-[11px] uppercase tracking-wide text-muted-foreground">
-        <Icon className="h-3.5 w-3.5" /> {label}
+    <div className="flex flex-col gap-2 bg-card p-5 transition-colors hover:bg-accent/40">
+      {/* 1 · Ícono grande (tile de acento) */}
+      <span className={cn('grid h-11 w-11 place-items-center rounded-2xl bg-muted/60', tone)}>
+        <Icon className="h-6 w-6" />
       </span>
-      <span className={cn('text-2xl font-extrabold tracking-tight', tone)}>
-        {isMoney ? <Money value={value} compact /> : value}
+      {/* 2 · Monto grande con CountUp */}
+      <span className={cn('text-3xl font-extrabold leading-none tracking-tight tabular-nums', tone)}>
+        {isMoney ? <Money value={value} compact count /> : <AnimatedNumber value={value} format={(n) => number(n)} />}
       </span>
+      {/* 3 · Título pequeño */}
+      <span className="text-[11px] font-medium uppercase tracking-[0.14em] text-muted-foreground">{label}</span>
     </div>
   );
   return href ? (

@@ -12,9 +12,12 @@ import { Badge } from '@/components/ui/badge';
 import { InfoHint } from '@/components/ui/info-hint';
 import { useDataset } from '@/lib/data-provider';
 import { aggregateSeries, type Granularity } from '@/lib/metrics';
-import { money } from '@/lib/format';
+import { money, number } from '@/lib/format';
 import { Money, useMaskedMoney } from '@/components/ui/money';
 import type { TransactionType } from '@/types';
+
+const moneyCompact = (n: number) => money(n, { compact: true });
+const numberPlain = (n: number) => number(n);
 
 interface FlowSectionProps {
   type: TransactionType;
@@ -64,10 +67,10 @@ export function FlowSection({ type, title, subtitle, icon, accent }: FlowSection
       <PageHeader title={title} subtitle={subtitle} />
 
       <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
-        <KpiCard index={0} href="/analitica" label={`${title} (acumulado)`} value={money(total, { compact: true })} icon={icon} accent={accent} secret />
-        <KpiCard index={1} href="/analitica" label="Promedio diario" value={money(promedioDiario, { compact: true })} icon={icon} accent={accent} secret />
+        <KpiCard index={0} href="/analitica" label={`${title} (acumulado)`} value={money(total, { compact: true })} rawValue={total} format={moneyCompact} icon={icon} accent={accent} secret />
+        <KpiCard index={1} href="/analitica" label="Promedio diario" value={money(promedioDiario, { compact: true })} rawValue={promedioDiario} format={moneyCompact} icon={icon} accent={accent} secret />
         <KpiCard index={2} href="/empresas" label="Empresa líder" value={byBusiness[0]?.label ?? '—'} icon={icon} accent={accent} hint={fmt(byBusiness[0]?.value ?? 0, { compact: true })} />
-        <KpiCard index={3} href="/empresas" label="Movimientos" value={String(flowTx.length)} icon={icon} accent={accent} />
+        <KpiCard index={3} href="/empresas" label="Movimientos" value={String(flowTx.length)} rawValue={flowTx.length} format={numberPlain} icon={icon} accent={accent} />
       </div>
 
       <div className="grid gap-4 lg:grid-cols-3">
@@ -123,7 +126,7 @@ export function FlowSection({ type, title, subtitle, icon, accent }: FlowSection
                 <div className="h-2.5 flex-1 overflow-hidden rounded-full bg-muted">
                   <div className="h-full rounded-full" style={{ width: `${(b.value / max) * 100}%`, background: b.color }} />
                 </div>
-                <span className="w-20 text-right text-sm font-medium"><Money value={b.value} compact /></span>
+                <span className="w-20 text-right text-sm font-medium"><Money value={b.value} compact count /></span>
                 <Badge variant="muted" className="hidden w-14 justify-center sm:flex">
                   {Math.round((b.value / byBusiness.reduce((a, x) => a + x.value, 0)) * 100)}%
                 </Badge>

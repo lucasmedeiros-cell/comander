@@ -11,10 +11,12 @@ import { useSettings } from '@/lib/store';
  * elemento esté completamente visible, para una sensación más fluida.
  */
 export function useInViewOnce<T extends Element = HTMLDivElement>(
-  margin: `${number}px ${number}px ${number}% ${number}px` = '0px 0px -12% 0px'
+  margin: `${number}px ${number}px ${number}% ${number}px` = '0px 0px -12% 0px',
+  /** Fracción visible necesaria para disparar (0–1). P. ej. 0.3 = 30% del elemento. */
+  amount?: number | 'some' | 'all'
 ) {
   const ref = React.useRef<T>(null);
-  const inView = useInView(ref, { once: true, margin });
+  const inView = useInView(ref, { once: true, margin, amount });
   return [ref, inView] as const;
 }
 

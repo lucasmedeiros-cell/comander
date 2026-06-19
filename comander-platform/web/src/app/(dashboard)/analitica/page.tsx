@@ -12,10 +12,15 @@ import { Money } from '@/components/ui/money';
 import { InfoHint } from '@/components/ui/info-hint';
 import { useDataset } from '@/lib/data-provider';
 import { aggregateSeries, computeOverview, computePerformance } from '@/lib/metrics';
-import { money, percent } from '@/lib/format';
+import { money, number, percent } from '@/lib/format';
 import { cn } from '@/lib/utils';
 
 const CAT_COLORS = ['#2D7EFF', '#10B981', '#8B5CF6', '#F59E0B', '#F97316', '#EF4444', '#60A5FA'];
+
+const fmtPercent = (n: number) => percent(n);
+const fmtPercent1 = (n: number) => `${n.toFixed(1)}%`;
+const fmtMoneyCompact = (n: number) => money(n, { compact: true });
+const fmtNumber = (n: number) => number(n);
 
 export default function AnaliticaPage() {
   const { businesses, transactions } = useDataset();
@@ -63,10 +68,10 @@ export default function AnaliticaPage() {
       <PageHeader title="Analítica avanzada" subtitle="Tendencias, crecimiento y variaciones para decidir con datos." />
 
       <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
-        <KpiCard index={0} href="/ingresos" label="Crecimiento mensual" value={percent(growth)} icon={TrendingUp} delta={growth} accent="#2D7EFF" hint="Ventas vs mes anterior" />
-        <KpiCard index={1} href="/rentabilidad" label="Margen promedio" value={`${margenPromedio.toFixed(1)}%`} icon={Percent} accent="#10B981" />
-        <KpiCard index={2} href="/rentabilidad" label="Utilidad del mes" value={money(mes.utilidad, { compact: true })} icon={Gauge} delta={mes.deltas.utilidadPct} accent="#8B5CF6" secret />
-        <KpiCard index={3} href="/empresas" label="Actividad" value={String(mes.cantidadIngresos + mes.cantidadEgresos)} icon={Activity} accent="#F97316" hint="Movimientos este mes" />
+        <KpiCard index={0} href="/ingresos" label="Crecimiento mensual" value={percent(growth)} rawValue={growth} format={fmtPercent} icon={TrendingUp} delta={growth} accent="#2D7EFF" hint="Ventas vs mes anterior" />
+        <KpiCard index={1} href="/rentabilidad" label="Margen promedio" value={`${margenPromedio.toFixed(1)}%`} rawValue={margenPromedio} format={fmtPercent1} icon={Percent} accent="#10B981" />
+        <KpiCard index={2} href="/rentabilidad" label="Utilidad del mes" value={money(mes.utilidad, { compact: true })} rawValue={mes.utilidad} format={fmtMoneyCompact} icon={Gauge} delta={mes.deltas.utilidadPct} accent="#8B5CF6" secret />
+        <KpiCard index={3} href="/empresas" label="Actividad" value={String(mes.cantidadIngresos + mes.cantidadEgresos)} rawValue={mes.cantidadIngresos + mes.cantidadEgresos} format={fmtNumber} icon={Activity} accent="#F97316" hint="Movimientos este mes" />
       </div>
 
       <Reveal className="grid gap-4 lg:grid-cols-3">
@@ -106,7 +111,7 @@ export default function AnaliticaPage() {
                   <span className="h-8 w-1 rounded-full" style={{ background: v.business.color }} />
                   <div className="min-w-0 flex-1">
                     <p className="truncate text-sm font-medium">{v.business.nombre}</p>
-                    <p className="text-xs text-muted-foreground"><Money value={v.valor} compact /> este mes</p>
+                    <p className="text-xs text-muted-foreground"><Money value={v.valor} compact count /> este mes</p>
                   </div>
                   <DeltaBadge value={v.variacion} />
                 </div>

@@ -1,0 +1,27 @@
+# Dependencias
+node_modules/
+**/node_modules/
+
+# Build / Next.js
+.next/
+**/.next/
+out/
+build/
+dist/
+*.tsbuildinfo
+
+# Entornos
+.env
+.env*.local
+
+# Netlify
+.netlify/
+
+# Notas/memoria locales de Claude Code (privado, no subir)
+.claude/
+
+# Sistema
+.DS_Store
+Thumbs.db
+*.log
+npm-debug.log*

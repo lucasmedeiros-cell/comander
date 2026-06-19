@@ -1,0 +1,10 @@
+# Normaliza saltos de línea: LF en el repo, conversión automática en checkout.
+* text=auto eol=lf
+
+# Binarios (no tocar)
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.mp4 binary
+*.ico binary

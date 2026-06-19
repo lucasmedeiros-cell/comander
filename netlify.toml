@@ -1,0 +1,17 @@
+# Configuración de despliegue en Netlify para COMANDER (web).
+# La app Next.js vive en comander-platform/web, por eso usamos `base`.
+
+[build]
+  base = "comander-platform/web"
+  command = "npm run build"
+  publish = ".next"
+
+[build.environment]
+  NODE_VERSION = "20"
+  # Fuente de datos: demo/mock por defecto (no requiere backend).
+  NEXT_PUBLIC_DATA_SOURCE = "mock"
+
+# Runtime oficial de Next.js en Netlify (SSR + rutas dinámicas como /empresas/[id]).
+# Netlify lo instala automáticamente al detectar Next.js.
+[[plugins]]
+  package = "@netlify/plugin-nextjs"

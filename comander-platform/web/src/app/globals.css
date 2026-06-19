@@ -1,0 +1,122 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* ───── Tema Claro ───── */
+    --background: 210 40% 98%;
+    --foreground: 222 47% 11%;
+    --card: 0 0% 100%;
+    --card-foreground: 222 47% 11%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222 47% 11%;
+    --primary: 217 100% 59%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 210 40% 94%;
+    --secondary-foreground: 222 47% 18%;
+    --muted: 210 40% 94%;
+    --muted-foreground: 215 16% 47%;
+    --accent: 210 40% 94%;
+    --accent-foreground: 222 47% 18%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 214 32% 88%;
+    --input: 214 32% 88%;
+    --ring: 217 100% 59%;
+    --radius: 0.75rem;
+    /* Color de marca (tema activo) */
+    --brand: 217 100% 59%;
+    --brand-light: 213 94% 68%;
+    --brand-accent: 195 100% 50%;
+  }
+
+  .dark {
+    /* ───── Tema Oscuro (navy ejecutivo, fundido con el logo #010512) ───── */
+    --background: 222 75% 4%;
+    --foreground: 213 31% 91%;
+    --card: 215 50% 9%;
+    --card-foreground: 213 31% 91%;
+    --popover: 215 52% 8%;
+    --popover-foreground: 213 31% 91%;
+    --primary: 217 100% 59%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 213 45% 14%;
+    --secondary-foreground: 213 31% 91%;
+    --muted: 214 42% 13%;
+    --muted-foreground: 215 18% 55%;
+    --accent: 213 45% 16%;
+    --accent-foreground: 213 31% 91%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 213 45% 20%;
+    --input: 213 45% 20%;
+    --ring: 217 100% 59%;
+    /* Color de marca (tema activo) */
+    --brand: 217 100% 59%;
+    --brand-light: 213 94% 68%;
+    --brand-accent: 195 100% 50%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-feature-settings: 'cv11', 'ss01';
+    text-rendering: optimizeLegibility;
+  }
+
+  /* Scrollbar fino estilo dashboard */
+  ::-webkit-scrollbar {
+    width: 7px;
+    height: 7px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    @apply rounded-full bg-border;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-primary;
+  }
+}
+
+@layer utilities {
+  .glass {
+    @apply backdrop-blur-xl;
+    background: hsl(var(--card) / 0.72);
+  }
+  .text-gradient {
+    @apply bg-gradient-to-r from-brand to-brand-light bg-clip-text text-transparent;
+  }
+  .card-hover {
+    @apply transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-brand/5;
+  }
+  /* Skeleton shimmer */
+  .shimmer {
+    position: relative;
+    overflow: hidden;
+  }
+  .shimmer::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    transform: translateX(-100%);
+    background: linear-gradient(
+      90deg,
+      transparent,
+      hsl(var(--foreground) / 0.06),
+      transparent
+    );
+    animation: shimmer 1.6s infinite;
+  }
+  @keyframes shimmer {
+    100% {
+      transform: translateX(100%);
+    }
+  }
+}

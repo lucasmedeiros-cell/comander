@@ -79,12 +79,11 @@ export default function InicioPage() {
 
   return (
     <div className="space-y-6">
-      {/* ───────── 1 · TARJETA PRINCIPAL (resumen premium, fija al hacer scroll) ───────── */}
+      {/* ───────── 1 · TARJETA PRINCIPAL (resumen premium consolidado) ───────── */}
       <motion.div
         initial={{ opacity: 0, y: 18, scale: 0.98 }}
         animate={{ opacity: 1, y: 0, scale: 1 }}
         transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-        className="sticky top-0 z-10"
       >
         <div className="relative overflow-hidden rounded-3xl border border-white/10 bg-gradient-to-br from-[#0b1224] via-[#0a0f1e] to-[#070b16] p-6 text-white shadow-2xl sm:p-8">
           {/* Glow sutil */}

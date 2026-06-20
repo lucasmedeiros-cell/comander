@@ -300,13 +300,13 @@ function BigStat({
   money?: boolean;
 }) {
   const inner = (
-    <div className="flex flex-col gap-2 bg-card p-5 transition-colors hover:bg-accent/40">
+    <div className="flex flex-col gap-2 bg-card p-4 transition-colors hover:bg-accent/40 sm:p-5">
       {/* 1 · Ícono grande (tile de acento) */}
       <span className={cn('grid h-11 w-11 place-items-center rounded-2xl bg-muted/60', tone)}>
         <Icon className="h-6 w-6" />
       </span>
-      {/* 2 · Monto grande con CountUp */}
-      <span className={cn('text-3xl font-extrabold leading-none tracking-tight tabular-nums', tone)}>
+      {/* 2 · Monto grande con CountUp (tipografía fluida) */}
+      <span className={cn('fluid-amount block truncate font-extrabold tracking-tight tabular-nums', tone)}>
         {isMoney ? <Money value={value} compact count /> : <AnimatedNumber value={value} format={(n) => number(n)} />}
       </span>
       {/* 3 · Título pequeño */}

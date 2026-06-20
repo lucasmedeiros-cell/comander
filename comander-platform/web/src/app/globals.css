@@ -63,10 +63,23 @@
   * {
     @apply border-border;
   }
+  html,
   body {
     @apply bg-background text-foreground antialiased;
+    /* Nunca scroll horizontal en ningún dispositivo (320px → 2560px). */
+    overflow-x: hidden;
+    max-width: 100%;
+  }
+  body {
     font-feature-settings: 'cv11', 'ss01';
     text-rendering: optimizeLegibility;
+  }
+  /* Medios e iconos nunca desbordan su contenedor. */
+  img,
+  video,
+  canvas {
+    max-width: 100%;
+    height: auto;
   }
 
   /* Scrollbar fino estilo dashboard */
@@ -86,6 +99,34 @@
 }
 
 @layer utilities {
+  /* ───── Tipografía fluida (responsive sin breakpoints) ─────
+     Escalan entre móvil (320px) y desktop (2560px) con clamp(). */
+  .fluid-hero {
+    font-size: clamp(1.6rem, 8vw, 3.5rem);
+    line-height: 1.05;
+  }
+  .fluid-amount {
+    font-size: clamp(1.25rem, 5.5vw, 2.25rem);
+    line-height: 1.05;
+  }
+  .fluid-amount-sm {
+    font-size: clamp(1.05rem, 4.2vw, 1.5rem);
+    line-height: 1.1;
+  }
+  .fluid-title {
+    font-size: clamp(1rem, 3.6vw, 1.5rem);
+    line-height: 1.15;
+  }
+  .fluid-sub {
+    font-size: clamp(0.78rem, 2.3vw, 1rem);
+    line-height: 1.3;
+  }
+  /* Área táctil mínima accesible (44x44) para controles en táctiles. */
+  .tap {
+    min-height: 44px;
+    min-width: 44px;
+  }
+
   .glass {
     @apply backdrop-blur-xl;
     background: hsl(var(--card) / 0.72);

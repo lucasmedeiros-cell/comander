@@ -80,7 +80,7 @@ export default function InicioPage() {
         animate={{ opacity: 1, y: 0, scale: 1 }}
         transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
       >
-        <div className="relative overflow-hidden rounded-3xl border border-white/10 bg-gradient-to-br from-[#0b1224] via-[#0a0f1e] to-[#070b16] p-6 text-white shadow-2xl sm:p-8">
+        <div className="relative overflow-hidden rounded-3xl border border-white/10 bg-gradient-to-br from-[#0b1224] via-[#0a0f1e] to-[#070b16] p-5 text-white shadow-2xl sm:p-7">
           {/* Glow sutil */}
           <motion.div
             aria-hidden
@@ -91,7 +91,7 @@ export default function InicioPage() {
 
           <div className="relative">
             {/* Encabezado: etiqueta + empresa + selector de periodo */}
-            <div className="flex items-start justify-between gap-3">
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
               <div className="min-w-0">
                 <p className="text-[11px] font-medium uppercase tracking-[0.22em] text-white/45">
                   Ganancia · {periodLabel}
@@ -100,14 +100,14 @@ export default function InicioPage() {
                   Todas las empresas · {businesses.length}
                 </p>
               </div>
-              <div className="flex shrink-0 items-center gap-1 rounded-full bg-white/5 p-1 ring-1 ring-white/10">
+              <div className="flex w-full shrink-0 items-center justify-between gap-1 rounded-full bg-white/5 p-1 ring-1 ring-white/10 sm:w-auto sm:justify-start">
                 {PERIODS.map((p) => (
                   <button
                     key={p.key}
                     type="button"
                     onClick={() => setRange(p.key)}
                     className={cn(
-                      'rounded-full px-3 py-1 text-xs font-medium transition-colors',
+                      'rounded-full px-2.5 py-2 text-xs font-medium transition-colors sm:px-3',
                       range === p.key ? 'bg-white text-black' : 'text-white/60 hover:text-white'
                     )}
                   >
@@ -117,10 +117,10 @@ export default function InicioPage() {
               </div>
             </div>
 
-            {/* Ganancia (protagonista, CountUp) */}
+            {/* Ganancia (protagonista, CountUp, tipografía fluida) */}
             <p
               className={cn(
-                'mt-4 text-5xl font-extrabold leading-none tracking-tight tabular-nums sm:text-6xl',
+                'fluid-hero mt-4 max-w-full whitespace-nowrap font-extrabold tracking-tight tabular-nums',
                 gananciaPositiva ? 'text-emerald-400' : 'text-rose-400'
               )}
             >
@@ -128,16 +128,16 @@ export default function InicioPage() {
             </p>
 
             {/* Ventas + Compras consolidadas (apoyo) */}
-            <div className="mt-7 grid grid-cols-2 gap-4">
-              <div className="rounded-2xl bg-white/5 p-4 ring-1 ring-white/10">
+            <div className="mt-7 grid grid-cols-2 gap-3 sm:gap-4">
+              <div className="min-w-0 rounded-2xl bg-white/5 p-3.5 ring-1 ring-white/10 sm:p-4">
                 <p className="text-[10px] font-medium uppercase tracking-[0.18em] text-white/45">Ventas</p>
-                <p className="mt-1 text-2xl font-bold tabular-nums text-white">
+                <p className="fluid-amount-sm mt-1 truncate font-bold tabular-nums text-white">
                   <Money value={ventasTotal} count />
                 </p>
               </div>
-              <div className="rounded-2xl bg-white/5 p-4 ring-1 ring-white/10">
+              <div className="min-w-0 rounded-2xl bg-white/5 p-3.5 ring-1 ring-white/10 sm:p-4">
                 <p className="text-[10px] font-medium uppercase tracking-[0.18em] text-white/45">Compras</p>
-                <p className="mt-1 text-2xl font-bold tabular-nums text-white">
+                <p className="fluid-amount-sm mt-1 truncate font-bold tabular-nums text-white">
                   <Money value={comprasTotal} count />
                 </p>
               </div>
@@ -152,11 +152,11 @@ export default function InicioPage() {
           <span className="h-4 w-1 rounded-full" style={{ background: selected?.color ?? '#2D7EFF' }} />
           <h2 className="truncate text-sm font-bold tracking-tight">{selected?.nombre ?? 'Empresa'}</h2>
         </div>
-        <div className="grid grid-cols-2 gap-4">
-          <Card className="p-5 sm:p-6">
+        <div className="grid grid-cols-1 gap-4 min-[400px]:grid-cols-2">
+          <Card className="p-4 sm:p-6">
             <StatBlock orientation="col" size="xl" icon={ShoppingCart} label="Ventas" value={ventasSel} accent="#2D7EFF" />
           </Card>
-          <Card className="p-5 sm:p-6">
+          <Card className="p-4 sm:p-6">
             <StatBlock orientation="col" size="xl" icon={ShoppingBag} label="Compras" value={comprasSel} accent="#F59E0B" />
           </Card>
         </div>

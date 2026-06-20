@@ -61,7 +61,7 @@ export function OperationalIndicators({
               >
                 {ind.emoji}
               </span>
-              <p className="mt-3 text-2xl font-extrabold leading-none tracking-tight tabular-nums text-foreground">
+              <p className="fluid-amount-sm mt-3 truncate font-extrabold tracking-tight tabular-nums text-foreground">
                 <AnimatedNumber value={ind.value} format={(n) => number(n)} />
               </p>
               <p className="mt-1.5 text-[11px] font-medium uppercase tracking-[0.12em] text-muted-foreground">

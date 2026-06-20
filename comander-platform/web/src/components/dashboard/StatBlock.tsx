@@ -35,10 +35,10 @@ interface StatBlockProps {
 }
 
 const SIZES = {
-  sm: { tile: 'h-11 w-11', icon: 'h-6 w-6', value: 'text-xl', label: 'text-[10px]' },
-  md: { tile: 'h-12 w-12', icon: 'h-6 w-6', value: 'text-2xl', label: 'text-[11px]' },
-  lg: { tile: 'h-14 w-14', icon: 'h-7 w-7', value: 'text-3xl', label: 'text-xs' },
-  xl: { tile: 'h-16 w-16', icon: 'h-8 w-8', value: 'text-4xl', label: 'text-xs' },
+  sm: { tile: 'h-11 w-11', icon: 'h-6 w-6', value: 'fluid-amount-sm', label: 'text-[10px]' },
+  md: { tile: 'h-12 w-12', icon: 'h-6 w-6', value: 'fluid-amount-sm', label: 'text-[11px]' },
+  lg: { tile: 'h-14 w-14', icon: 'h-7 w-7', value: 'fluid-amount', label: 'text-xs' },
+  xl: { tile: 'h-16 w-16', icon: 'h-8 w-8', value: 'fluid-amount', label: 'text-xs' },
 } as const;
 
 export function StatBlock({

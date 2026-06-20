@@ -60,9 +60,10 @@ export default function LoginPage() {
             initial={{ opacity: 0, scale: 0.9, y: 8 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
-            className="relative h-56 w-[22rem] max-w-full overflow-hidden rounded-3xl bg-[#070b18] ring-1 ring-white/10 shadow-2xl"
+            className="relative w-[min(22rem,78vw)] max-w-full overflow-hidden rounded-3xl bg-[#070b18] ring-1 ring-white/10 shadow-2xl"
+            style={{ aspectRatio: '1.6 / 1' }}
           >
-            <Image src="/logo.png" alt="COMANDER" fill sizes="352px" className="object-contain" priority />
+            <Image src="/logo.png" alt="COMANDER" fill sizes="(max-width: 640px) 78vw, 352px" className="object-contain" priority />
           </motion.div>
         </div>
 

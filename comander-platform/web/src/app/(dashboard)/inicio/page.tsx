@@ -3,24 +3,24 @@
 import * as React from 'react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
-import { ArrowRight, Building2, ShoppingBag, ShoppingCart, Sparkles } from 'lucide-react';
+import { Building2, ShoppingBag, ShoppingCart } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Money } from '@/components/ui/money';
 import { StatBlock } from '@/components/dashboard/StatBlock';
+import { OperationalIndicators } from '@/components/dashboard/OperationalIndicators';
 import { CompanyCarousel } from '@/components/dashboard/CompanyCarousel';
 import { useDataset } from '@/lib/data-provider';
 import { useMounted } from '@/lib/use-mounted';
 import { useVisibleBusinesses, useSelectedBusiness } from '@/lib/business-store';
 import { computeOverview, computePerformance } from '@/lib/metrics';
-import { buildInsights } from '@/lib/insights';
-import { SUGGESTED_QUESTIONS } from '@/lib/copilot';
 import type { RangeKey } from '@/types';
 import { cn } from '@/lib/utils';
 
 // Periodos disponibles para la tarjeta principal (cambio anima los montos).
 const PERIODS: Array<{ key: RangeKey; label: string }> = [
   { key: 'hoy', label: 'Hoy' },
+  { key: 'ayer', label: 'Ayer' },
   { key: 'semana', label: 'Semana' },
   { key: 'mes', label: 'Mes' },
 ];
@@ -39,16 +39,11 @@ export default function InicioPage() {
     [businesses, transactions, range]
   );
 
-  // Tarjetas centrales + IA: SOLO la empresa seleccionada.
+  // Tarjetas centrales + indicadores: SOLO la empresa seleccionada.
   const perf = React.useMemo(
     () => (selected ? computePerformance([selected], transactions, range)[0] : null),
     [selected, transactions, range]
   );
-  const overviewSel = React.useMemo(
-    () => (selected ? computeOverview([selected], transactions, range) : null),
-    [selected, transactions, range]
-  );
-  const insights = React.useMemo(() => (overviewSel ? buildInsights(overviewSel).slice(0, 2) : []), [overviewSel]);
 
   const periodLabel = PERIODS.find((p) => p.key === range)?.label ?? 'Hoy';
 
@@ -167,7 +162,10 @@ export default function InicioPage() {
         </div>
       </div>
 
-      {/* ───────── 3 · CARRUSEL DE EMPRESAS (selector) ───────── */}
+      {/* ───────── 3 · INDICADORES DEL NEGOCIO (según tipo de empresa) ───────── */}
+      <OperationalIndicators business={selected} transactions={transactions} range={range} />
+
+      {/* ───────── 4 · CARRUSEL DE EMPRESAS (selector) ───────── */}
       <div className="space-y-3">
         <div className="flex items-center justify-between">
           <div>
@@ -182,66 +180,6 @@ export default function InicioPage() {
           <CompanyCarousel businesses={businesses} selectedId={selectedId} onSelect={setSelectedBusiness} />
         )}
       </div>
-
-      {/* ───────── 4 · IA EMPRESARIAL ───────── */}
-      <Card className="overflow-hidden">
-        <div className="flex items-center gap-3 border-b border-border p-5">
-          <span className="grid h-11 w-11 shrink-0 place-items-center rounded-2xl bg-gradient-to-br from-brand to-purple text-white shadow-md">
-            <Sparkles className="h-6 w-6" />
-          </span>
-          <div className="min-w-0">
-            <h2 className="text-base font-bold tracking-tight">IA Empresarial</h2>
-            <p className="truncate text-xs text-muted-foreground">
-              Análisis sobre {selected?.nombre ?? 'tu empresa'}
-            </p>
-          </div>
-        </div>
-
-        <div className="space-y-4 p-5">
-          {insights.length > 0 && (
-            <div className="space-y-2">
-              {insights.map((ins, i) => (
-                <motion.div
-                  key={`${selectedId}-${i}`}
-                  initial={{ opacity: 0, x: 8 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: i * 0.08 }}
-                  className="flex items-start gap-3 rounded-xl border border-border bg-background/40 p-3"
-                >
-                  <span
-                    className={cn(
-                      'mt-1.5 h-2 w-2 shrink-0 rounded-full',
-                      ins.tone === 'good' && 'bg-success',
-                      ins.tone === 'bad' && 'bg-danger',
-                      ins.tone === 'neutral' && 'bg-muted-foreground'
-                    )}
-                  />
-                  <p className="text-sm leading-snug text-foreground/90">{ins.text}</p>
-                </motion.div>
-              ))}
-            </div>
-          )}
-
-          {/* Preguntas sugeridas → abren la IA */}
-          <div className="flex flex-wrap gap-2">
-            {SUGGESTED_QUESTIONS.slice(0, 3).map((q) => (
-              <Link
-                key={q}
-                href="/copiloto"
-                className="rounded-full border border-border bg-muted/40 px-3 py-1.5 text-xs font-medium text-muted-foreground transition-colors hover:border-primary/40 hover:text-foreground"
-              >
-                {q}
-              </Link>
-            ))}
-          </div>
-
-          <Button asChild className="w-full sm:w-auto">
-            <Link href="/copiloto">
-              Abrir IA Empresarial <ArrowRight className="h-4 w-4" />
-            </Link>
-          </Button>
-        </div>
-      </Card>
     </div>
   );
 }

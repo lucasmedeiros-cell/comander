@@ -14,6 +14,16 @@ export interface User {
 export type BusinessStatus = 'ACTIVE' | 'INACTIVE';
 export type ApiStatus = 'CONNECTED' | 'DISCONNECTED' | 'ERROR';
 
+/** Tipo de negocio: determina los Indicadores Operativos que se muestran. */
+export type BusinessType =
+  | 'restaurante'
+  | 'tienda'
+  | 'farmacia'
+  | 'logistica'
+  | 'ferreteria'
+  | 'servicios'
+  | 'supermercado';
+
 export interface Business {
   id: string;
   nombre: string;
@@ -23,6 +33,8 @@ export interface Business {
   apiStatus: ApiStatus;
   lastSync: string; // ISO
   metaMensual: number;
+  /** Tipo de negocio (restaurante, tienda, farmacia…). Controla los indicadores. */
+  tipo?: BusinessType;
   /** Logo opcional (dataURL u object URL) para mostrar en la tarjeta. */
   logo?: string;
   /** Descripción opcional. */

@@ -19,7 +19,8 @@ import { LogoUploader } from './LogoUploader';
 import { ApiConfigFields, TestConnectionRow, useConnectionTest } from './connection';
 import { useBusinessStore } from '@/lib/business-store';
 import { CATEGORIAS, MONEDAS, PALETTE, ZONAS } from '@/lib/empresas';
-import type { Business, BusinessApiConfig } from '@/types';
+import { BUSINESS_TYPE_OPTIONS } from '@/lib/operational';
+import type { Business, BusinessApiConfig, BusinessType } from '@/types';
 import { cn } from '@/lib/utils';
 
 const selectClass =
@@ -62,6 +63,7 @@ export function EmpresaFormDialog(props: Props) {
   const [nombre, setNombre] = React.useState(base?.nombre ?? '');
   const [descripcion, setDescripcion] = React.useState(base?.descripcion ?? '');
   const [categoria, setCategoria] = React.useState(base?.categoria ?? base?.sector ?? 'General');
+  const [tipo, setTipo] = React.useState<BusinessType>(base?.tipo ?? 'tienda');
   const [moneda, setMoneda] = React.useState(base?.moneda ?? 'USD');
   const [zona, setZona] = React.useState(base?.zonaHoraria ?? 'America/Bogota');
   const [activa, setActiva] = React.useState((base?.status ?? 'ACTIVE') === 'ACTIVE');
@@ -76,6 +78,7 @@ export function EmpresaFormDialog(props: Props) {
     setNombre(base?.nombre ?? '');
     setDescripcion(base?.descripcion ?? '');
     setCategoria(base?.categoria ?? base?.sector ?? 'General');
+    setTipo(base?.tipo ?? 'tienda');
     setMoneda(base?.moneda ?? 'USD');
     setZona(base?.zonaHoraria ?? 'America/Bogota');
     setActiva((base?.status ?? 'ACTIVE') === 'ACTIVE');
@@ -101,6 +104,7 @@ export function EmpresaFormDialog(props: Props) {
           descripcion: descripcion.trim() || undefined,
           sector: categoria,
           categoria,
+          tipo,
           moneda,
           zonaHoraria: zona,
           status: status_,
@@ -116,6 +120,7 @@ export function EmpresaFormDialog(props: Props) {
         nombre: nombre.trim(),
         sector: categoria,
         categoria,
+        tipo,
         color,
         status: status_,
         apiStatus: status === 'ok' ? 'CONNECTED' : 'DISCONNECTED',
@@ -157,6 +162,17 @@ export function EmpresaFormDialog(props: Props) {
 
         <div className="grid grid-cols-2 gap-3">
           <div className="space-y-1.5">
+            <Label>Tipo de negocio</Label>
+            <select value={tipo} onChange={(e) => setTipo(e.target.value as BusinessType)} className={selectClass}>
+              {BUSINESS_TYPE_OPTIONS.map((t) => (
+                <option key={t.value} value={t.value}>
+                  {t.label}
+                </option>
+              ))}
+            </select>
+            <p className="text-[11px] text-muted-foreground">Define los Indicadores Operativos del Inicio.</p>
+          </div>
+          <div className="space-y-1.5">
             <Label>Categoría</Label>
             <select value={categoria} onChange={(e) => setCategoria(e.target.value)} className={selectClass}>
               {CATEGORIAS.map((c) => (
@@ -166,6 +182,9 @@ export function EmpresaFormDialog(props: Props) {
               ))}
             </select>
           </div>
+        </div>
+
+        <div className="grid grid-cols-2 gap-3">
           <div className="space-y-1.5">
             <Label>Moneda</Label>
             <select value={moneda} onChange={(e) => setMoneda(e.target.value)} className={selectClass}>

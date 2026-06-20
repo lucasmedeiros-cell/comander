@@ -1,4 +1,4 @@
-import { Building2, Home, Settings, Sparkles, type LucideIcon } from 'lucide-react';
+import { Building2, Home, Settings, type LucideIcon } from 'lucide-react';
 
 export interface NavItem {
   href: string;
@@ -19,7 +19,6 @@ export const NAV: NavSection[] = [
     items: [
       { href: '/inicio', label: 'Inicio', icon: Home },
       { href: '/empresas', label: 'Empresas', icon: Building2 },
-      { href: '/copiloto', label: 'IA Empresarial', icon: Sparkles },
       { href: '/configuracion', label: 'Configuración', icon: Settings },
     ],
   },

@@ -31,11 +31,11 @@ const BUSINESS_DEFS: Array<Omit<Business, 'lastSync' | 'apiStatus'> & {
   apiStatus: Business['apiStatus'];
   syncMinAgo: number;
 }> = [
-  { id: 'b1', nombre: 'Petrobox Logística', sector: 'Logística', color: '#2D7EFF', status: 'ACTIVE', metaMensual: 240000, scale: 8200, margin: 0.32, trend: 0.12, apiStatus: 'CONNECTED', syncMinAgo: 3 },
-  { id: 'b2', nombre: 'Aurora Retail', sector: 'Comercio', color: '#10B981', status: 'ACTIVE', metaMensual: 180000, scale: 6400, margin: 0.24, trend: 0.07, apiStatus: 'CONNECTED', syncMinAgo: 11 },
-  { id: 'b3', nombre: 'NovaTech Studio', sector: 'Tecnología', color: '#8B5CF6', status: 'ACTIVE', metaMensual: 150000, scale: 5200, margin: 0.41, trend: 0.21, apiStatus: 'CONNECTED', syncMinAgo: 6 },
-  { id: 'b4', nombre: 'Café del Puerto', sector: 'Gastronomía', color: '#F59E0B', status: 'ACTIVE', metaMensual: 90000, scale: 3100, margin: 0.18, trend: -0.05, apiStatus: 'ERROR', syncMinAgo: 320 },
-  { id: 'b5', nombre: 'Mare Inmobiliaria', sector: 'Inmobiliario', color: '#F97316', status: 'INACTIVE', metaMensual: 120000, scale: 4300, margin: 0.36, trend: 0.02, apiStatus: 'DISCONNECTED', syncMinAgo: 2880 },
+  { id: 'b1', nombre: 'Petrobox Logística', sector: 'Logística', tipo: 'logistica', color: '#2D7EFF', status: 'ACTIVE', metaMensual: 240000, scale: 8200, margin: 0.32, trend: 0.12, apiStatus: 'CONNECTED', syncMinAgo: 3 },
+  { id: 'b2', nombre: 'Aurora Retail', sector: 'Comercio', tipo: 'tienda', color: '#10B981', status: 'ACTIVE', metaMensual: 180000, scale: 6400, margin: 0.24, trend: 0.07, apiStatus: 'CONNECTED', syncMinAgo: 11 },
+  { id: 'b3', nombre: 'NovaTech Studio', sector: 'Tecnología', tipo: 'servicios', color: '#8B5CF6', status: 'ACTIVE', metaMensual: 150000, scale: 5200, margin: 0.41, trend: 0.21, apiStatus: 'CONNECTED', syncMinAgo: 6 },
+  { id: 'b4', nombre: 'Café del Puerto', sector: 'Gastronomía', tipo: 'restaurante', color: '#F59E0B', status: 'ACTIVE', metaMensual: 90000, scale: 3100, margin: 0.18, trend: -0.05, apiStatus: 'ERROR', syncMinAgo: 320 },
+  { id: 'b5', nombre: 'Farmacia Vida', sector: 'Salud', tipo: 'farmacia', color: '#F97316', status: 'ACTIVE', metaMensual: 120000, scale: 4300, margin: 0.36, trend: 0.06, apiStatus: 'CONNECTED', syncMinAgo: 48 },
 ];
 
 const INCOME_CATS = ['Suscripciones', 'Servicios', 'Productos', 'Contratos', 'Comisiones'];
@@ -59,6 +59,7 @@ export function getDataset(): { businesses: Business[]; transactions: Transactio
     id: b.id,
     nombre: b.nombre,
     sector: b.sector,
+    tipo: b.tipo,
     color: b.color,
     status: b.status,
     metaMensual: b.metaMensual,

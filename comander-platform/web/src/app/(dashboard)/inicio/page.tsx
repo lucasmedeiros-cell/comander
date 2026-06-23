@@ -19,8 +19,8 @@ import { cn } from '@/lib/utils';
 
 // Periodos disponibles para la tarjeta principal (cambio anima los montos).
 const PERIODS: Array<{ key: RangeKey; label: string }> = [
-  { key: 'hoy', label: 'Hoy' },
   { key: 'ayer', label: 'Ayer' },
+  { key: 'hoy', label: 'Hoy' },
   { key: 'semana', label: 'Semana' },
   { key: 'mes', label: 'Mes' },
 ];
@@ -146,7 +146,23 @@ export default function InicioPage() {
         </div>
       </motion.div>
 
-      {/* ───────── 2 · TARJETAS CENTRALES (Ventas · Compras de la empresa elegida) ───────── */}
+      {/* ───────── 2 · CARRUSEL DE EMPRESAS (selector, debajo del resumen) ───────── */}
+      <div className="space-y-3">
+        <div className="flex items-center justify-between">
+          <div>
+            <h2 className="text-sm font-bold tracking-tight">Tus empresas</h2>
+            <p className="text-xs text-muted-foreground">Toca una para ver su detalle abajo</p>
+          </div>
+          <Link href="/empresas" className="text-xs font-medium text-primary hover:underline">
+            Administrar →
+          </Link>
+        </div>
+        {!loading && (
+          <CompanyCarousel businesses={businesses} selectedId={selectedId} onSelect={setSelectedBusiness} />
+        )}
+      </div>
+
+      {/* ───────── 3 · TARJETAS CENTRALES (Ventas · Compras de la empresa elegida) ───────── */}
       <div className="space-y-3">
         <div className="flex items-center gap-2">
           <span className="h-4 w-1 rounded-full" style={{ background: selected?.color ?? '#2D7EFF' }} />
@@ -162,24 +178,8 @@ export default function InicioPage() {
         </div>
       </div>
 
-      {/* ───────── 3 · INDICADORES DEL NEGOCIO (según tipo de empresa) ───────── */}
+      {/* ───────── 4 · INDICADORES DEL NEGOCIO + GRÁFICA (según tipo de empresa) ───────── */}
       <OperationalIndicators business={selected} transactions={transactions} range={range} />
-
-      {/* ───────── 4 · CARRUSEL DE EMPRESAS (selector) ───────── */}
-      <div className="space-y-3">
-        <div className="flex items-center justify-between">
-          <div>
-            <h2 className="text-sm font-bold tracking-tight">Tus empresas</h2>
-            <p className="text-xs text-muted-foreground">Toca una para ver su resumen arriba</p>
-          </div>
-          <Link href="/empresas" className="text-xs font-medium text-primary hover:underline">
-            Administrar →
-          </Link>
-        </div>
-        {!loading && (
-          <CompanyCarousel businesses={businesses} selectedId={selectedId} onSelect={setSelectedBusiness} />
-        )}
-      </div>
     </div>
   );
 }

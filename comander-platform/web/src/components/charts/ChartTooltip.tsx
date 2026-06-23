@@ -31,8 +31,8 @@ export function ChartTooltip({ active, payload, label }: TooltipProps<number, st
       <div className="min-w-[180px] rounded-lg border border-border bg-popover/95 px-3 py-2 text-xs shadow-xl backdrop-blur">
         {label !== undefined && <Row name="Fecha" value={String(label)} muted />}
         {empresa && typeof empresa === 'string' && <Row name="Empresa" value={empresa} muted />}
-        {ventas !== undefined && <Row name="Ventas" value={fmt(ventas)} dot="#2D7EFF" />}
-        {compras !== undefined && <Row name="Compras" value={fmt(compras)} dot="#F59E0B" />}
+        {ventas !== undefined && <Row name="Ingresos" value={fmt(ventas)} dot="#2D7EFF" />}
+        {compras !== undefined && <Row name="Costos" value={fmt(compras)} dot="#F59E0B" />}
         {diferencia !== undefined && (
           <Row
             name="Diferencia"

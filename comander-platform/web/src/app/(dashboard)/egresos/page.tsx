@@ -7,8 +7,8 @@ export default function EgresosPage() {
   return (
     <FlowSection
       type="EXPENSE"
-      title="Compras"
-      subtitle="Compras de todas tus empresas, por periodo y comparadas entre sí."
+      title="Costos"
+      subtitle="Costos de todas tus empresas, por periodo y comparadas entre sí."
       icon={TrendingDown}
       accent="#F59E0B"
     />

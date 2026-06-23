@@ -175,8 +175,8 @@ function EmpresaCard({
           <p className="mt-3 text-[11px] text-muted-foreground">Última sincronización: {haceCuanto(b.lastSync)}</p>
 
           <div className="mt-4 space-y-4">
-            <StatBlock icon={ShoppingCart} label="Ventas" value={perf?.ingresos ?? 0} accent="#2D7EFF" />
-            <StatBlock icon={ShoppingBag} label="Compras" value={perf?.egresos ?? 0} accent="#F59E0B" />
+            <StatBlock icon={ShoppingCart} label="Ingresos" value={perf?.ingresos ?? 0} accent="#2D7EFF" />
+            <StatBlock icon={ShoppingBag} label="Costos" value={perf?.egresos ?? 0} accent="#F59E0B" />
             <StatBlock
               icon={Wallet}
               label={(perf?.rentabilidad ?? 0) >= 0 ? 'Ganancia' : 'Pérdida'}

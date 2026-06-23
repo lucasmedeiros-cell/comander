@@ -19,8 +19,8 @@ import { cn } from '@/lib/utils';
 
 const PDF_KINDS: Array<{ kind: ReportKind; label: string; desc: string }> = [
   { kind: 'resumen', label: 'Resumen ejecutivo', desc: 'Visión global con KPIs y ranking de empresas.' },
-  { kind: 'ingresos', label: 'Ventas', desc: 'Detalle de ventas por empresa y categoría.' },
-  { kind: 'egresos', label: 'Compras', desc: 'Detalle de compras por empresa y categoría.' },
+  { kind: 'ingresos', label: 'Ingresos', desc: 'Detalle de ingresos por empresa y categoría.' },
+  { kind: 'egresos', label: 'Costos', desc: 'Detalle de costos por empresa y categoría.' },
   { kind: 'rentabilidad', label: 'Rentabilidad', desc: 'Rentabilidad y márgenes por empresa.' },
   { kind: 'comparativo', label: 'Comparativo de empresas', desc: 'Tabla comparativa entre todos los negocios.' },
 ];

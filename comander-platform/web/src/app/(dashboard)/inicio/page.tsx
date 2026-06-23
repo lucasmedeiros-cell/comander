@@ -8,6 +8,7 @@ import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Money } from '@/components/ui/money';
 import { StatBlock } from '@/components/dashboard/StatBlock';
+import { CompanyRanking } from '@/components/dashboard/CompanyRanking';
 import { OperationalIndicators } from '@/components/dashboard/OperationalIndicators';
 import { CompanyCarousel } from '@/components/dashboard/CompanyCarousel';
 import { useDataset } from '@/lib/data-provider';
@@ -127,16 +128,16 @@ export default function InicioPage() {
               <Money value={gananciaTotal} count />
             </p>
 
-            {/* Ventas + Compras consolidadas (apoyo) */}
+            {/* Ingresos + Costos consolidadas (apoyo) */}
             <div className="mt-7 grid grid-cols-2 gap-3 sm:gap-4">
               <div className="min-w-0 rounded-2xl bg-white/5 p-3.5 ring-1 ring-white/10 sm:p-4">
-                <p className="text-[10px] font-medium uppercase tracking-[0.18em] text-white/45">Ventas</p>
+                <p className="text-[10px] font-medium uppercase tracking-[0.18em] text-white/45">Ingresos</p>
                 <p className="fluid-amount-sm mt-1 truncate font-bold tabular-nums text-white">
                   <Money value={ventasTotal} count />
                 </p>
               </div>
               <div className="min-w-0 rounded-2xl bg-white/5 p-3.5 ring-1 ring-white/10 sm:p-4">
-                <p className="text-[10px] font-medium uppercase tracking-[0.18em] text-white/45">Compras</p>
+                <p className="text-[10px] font-medium uppercase tracking-[0.18em] text-white/45">Costos</p>
                 <p className="fluid-amount-sm mt-1 truncate font-bold tabular-nums text-white">
                   <Money value={comprasTotal} count />
                 </p>
@@ -146,7 +147,10 @@ export default function InicioPage() {
         </div>
       </motion.div>
 
-      {/* ───────── 2 · CARRUSEL DE EMPRESAS (selector, debajo del resumen) ───────── */}
+      {/* ───────── 2 · RANKING DE EMPRESAS (mayor ingreso, barras horizontales) ───────── */}
+      <CompanyRanking businesses={businesses} transactions={transactions} range={range} />
+
+      {/* ───────── 3 · CARRUSEL DE EMPRESAS (selector, debajo del resumen) ───────── */}
       <div className="space-y-3">
         <div className="flex items-center justify-between">
           <div>
@@ -162,7 +166,7 @@ export default function InicioPage() {
         )}
       </div>
 
-      {/* ───────── 3 · TARJETAS CENTRALES (Ventas · Compras de la empresa elegida) ───────── */}
+      {/* ───────── 3 · TARJETAS CENTRALES (Ingresos · Costos de la empresa elegida) ───────── */}
       <div className="space-y-3">
         <div className="flex items-center gap-2">
           <span className="h-4 w-1 rounded-full" style={{ background: selected?.color ?? '#2D7EFF' }} />
@@ -170,10 +174,10 @@ export default function InicioPage() {
         </div>
         <div className="grid grid-cols-1 gap-4 min-[400px]:grid-cols-2">
           <Card className="p-4 sm:p-6">
-            <StatBlock orientation="col" size="xl" icon={ShoppingCart} label="Ventas" value={ventasSel} accent="#2D7EFF" />
+            <StatBlock orientation="col" size="xl" icon={ShoppingCart} label="Ingresos" value={ventasSel} accent="#2D7EFF" />
           </Card>
           <Card className="p-4 sm:p-6">
-            <StatBlock orientation="col" size="xl" icon={ShoppingBag} label="Compras" value={comprasSel} accent="#F59E0B" />
+            <StatBlock orientation="col" size="xl" icon={ShoppingBag} label="Costos" value={comprasSel} accent="#F59E0B" />
           </Card>
         </div>
       </div>

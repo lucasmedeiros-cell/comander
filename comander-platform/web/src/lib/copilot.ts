@@ -1,6 +1,6 @@
 // ───────────────────────── Copiloto IA — motor local ─────────────────────────
 // Motor conversacional 100% local (sin LLM ni red). Interpreta preguntas en
-// lenguaje natural sobre Ventas, Compras, Ganancia, Empresas, Alertas y
+// lenguaje natural sobre Ingresos, Costos, Ganancia, Empresas, Alertas y
 // Tendencias, y responde con datos reales calculados sobre el dataset activo
 // (demo o API). También produce el "Modo Consejero": recomendaciones
 // automáticas accionables a partir de las métricas.
@@ -35,8 +35,8 @@ export interface CopilotAnswer {
 
 // Preguntas sugeridas (chips) que el usuario puede tocar para empezar.
 export const SUGGESTED_QUESTIONS: string[] = [
-  '¿Cómo van las ventas este mes?',
-  '¿Cuánto gasté en compras?',
+  '¿Cómo van las ingresos este mes?',
+  '¿Cuánto gasté en costos?',
   '¿Cuál es mi empresa más rentable?',
   '¿Tengo ganancia o pérdida?',
   '¿Qué empresas están desconectadas?',
@@ -93,7 +93,7 @@ export function answerQuestion(raw: string, ctx: CopilotContext): CopilotAnswer 
   const { businesses, transactions, alerts } = ctx;
 
   if (!q) {
-    return { text: 'Escríbeme una pregunta sobre tus ventas, compras, ganancia, empresas o alertas.' };
+    return { text: 'Escríbeme una pregunta sobre tus ingresos, costos, ganancia, empresas o alertas.' };
   }
 
   // Saludo / ayuda.
@@ -166,7 +166,7 @@ export function answerQuestion(raw: string, ctx: CopilotContext): CopilotAnswer 
       bullets: perf
         .slice()
         .sort((a, b) => b.ingresos - a.ingresos)
-        .map((p) => `${p.business.nombre} — ${money(p.ingresos, { compact: true })} en ventas`),
+        .map((p) => `${p.business.nombre} — ${money(p.ingresos, { compact: true })} en ingresos`),
     };
   }
 
@@ -178,28 +178,28 @@ export function answerQuestion(raw: string, ctx: CopilotContext): CopilotAnswer 
     return {
       text: `${label[0].toUpperCase() + label.slice(1)} tu resultado es ${positiva ? 'positivo' : 'negativo'}: ${money(u)} (${positiva ? 'ganancia' : 'pérdida'}), con un margen del ${margen.toFixed(0)}%.`,
       bullets: [
-        `Ventas: ${money(overview.ingresosTotales)}`,
-        `Compras: ${money(overview.egresosTotales)}`,
+        `Ingresos: ${money(overview.ingresosTotales)}`,
+        `Costos: ${money(overview.egresosTotales)}`,
         `Resultado: ${money(u)} (${percent(overview.deltas.utilidadPct)} vs periodo anterior)`,
       ],
       tone: positiva ? 'good' : 'bad',
     };
   }
 
-  // ── Compras / Egresos ──
+  // ── Costos / Egresos ──
   if (has(q, 'compra', 'gasto', 'egreso', 'gaste', 'proveedor')) {
     const d = overview.deltas.egresosPct;
     return {
-      text: `${label[0].toUpperCase() + label.slice(1)} llevas ${money(overview.egresosTotales)} en compras (${overview.cantidadEgresos} registros), ${trendWord(d, true)} ${percent(d)} respecto al periodo anterior.`,
+      text: `${label[0].toUpperCase() + label.slice(1)} llevas ${money(overview.egresosTotales)} en costos (${overview.cantidadEgresos} registros), ${trendWord(d, true)} ${percent(d)} respecto al periodo anterior.`,
       tone: d <= 0 ? 'good' : 'neutral',
     };
   }
 
-  // ── Ventas / Ingresos ──
+  // ── Ingresos / Ingresos ──
   if (has(q, 'venta', 'ingreso', 'vendi', 'facturacion', 'factura', 'cuanto vend')) {
     const d = overview.deltas.ingresosPct;
     return {
-      text: `${label[0].toUpperCase() + label.slice(1)} llevas ${money(overview.ingresosTotales)} en ventas (${overview.cantidadIngresos} registros), ${trendWord(d, false)} ${percent(d)} respecto al periodo anterior.`,
+      text: `${label[0].toUpperCase() + label.slice(1)} llevas ${money(overview.ingresosTotales)} en ingresos (${overview.cantidadIngresos} registros), ${trendWord(d, false)} ${percent(d)} respecto al periodo anterior.`,
       bullets: overview.mejorEmpresa
         ? [`Tu mejor empresa es ${overview.mejorEmpresa.nombre}.`]
         : undefined,
@@ -214,8 +214,8 @@ export function answerQuestion(raw: string, ctx: CopilotContext): CopilotAnswer 
     return {
       text: `En los últimos 30 días tu rentabilidad está ${dir.label}. ${dir.detail}`,
       bullets: [
-        `Ventas ${label}: ${money(overview.ingresosTotales, { compact: true })} (${percent(overview.deltas.ingresosPct)})`,
-        `Compras ${label}: ${money(overview.egresosTotales, { compact: true })} (${percent(overview.deltas.egresosPct)})`,
+        `Ingresos ${label}: ${money(overview.ingresosTotales, { compact: true })} (${percent(overview.deltas.ingresosPct)})`,
+        `Costos ${label}: ${money(overview.egresosTotales, { compact: true })} (${percent(overview.deltas.egresosPct)})`,
       ],
       tone: dir.tone,
     };
@@ -225,8 +225,8 @@ export function answerQuestion(raw: string, ctx: CopilotContext): CopilotAnswer 
   return {
     text: `Esto es lo que veo ${label}:`,
     bullets: [
-      `Ventas: ${money(overview.ingresosTotales)} (${percent(overview.deltas.ingresosPct)})`,
-      `Compras: ${money(overview.egresosTotales)} (${percent(overview.deltas.egresosPct)})`,
+      `Ingresos: ${money(overview.ingresosTotales)} (${percent(overview.deltas.ingresosPct)})`,
+      `Costos: ${money(overview.egresosTotales)} (${percent(overview.deltas.egresosPct)})`,
       `${overview.utilidad >= 0 ? 'Ganancia' : 'Pérdida'}: ${money(overview.utilidad)}`,
       overview.mejorEmpresa ? `Mejor empresa: ${overview.mejorEmpresa.nombre}` : `Empresas activas: ${overview.empresasActivas}`,
     ],
@@ -283,23 +283,23 @@ export function buildAdvice(ctx: CopilotContext): Advice[] {
 
   if (overview.deltas.ingresosPct < -8) {
     out.push({
-      id: 'adv-ventas-down',
-      observation: `Las ventas bajaron ${percent(overview.deltas.ingresosPct)} respecto al periodo anterior.`,
+      id: 'adv-ingresos-down',
+      observation: `Las ingresos bajaron ${percent(overview.deltas.ingresosPct)} respecto al periodo anterior.`,
       suggestion: 'Revisa tus campañas y reactiva las promociones de mayor impacto.',
       severity: 'alta',
       href: '/ingresos',
-      cta: 'Ver ventas',
+      cta: 'Ver ingresos',
     });
   }
 
   if (overview.deltas.egresosPct > 15) {
     out.push({
-      id: 'adv-compras-up',
-      observation: `Las compras aumentaron ${percent(overview.deltas.egresosPct)}.`,
+      id: 'adv-costos-up',
+      observation: `Las costos aumentaron ${percent(overview.deltas.egresosPct)}.`,
       suggestion: 'Verifica proveedores y renegocia condiciones de compra.',
       severity: 'media',
       href: '/egresos',
-      cta: 'Ver compras',
+      cta: 'Ver costos',
     });
   }
 

@@ -28,3 +28,4 @@ npm-debug.log*
 
 # Instaladores/binarios sueltos
 *.exe
+*.pdf

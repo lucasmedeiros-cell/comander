@@ -73,7 +73,7 @@ export async function generatePdf(
   // Tarjetas resumen
   autoTable(doc, {
     startY: 50,
-    head: [['Ventas', 'Compras', 'Rentabilidad', 'Movimientos']],
+    head: [['Ingresos', 'Costos', 'Rentabilidad', 'Movimientos']],
     body: [[fmt(ingresos), fmt(egresos), fmt(ingresos - egresos), String(tx.length)]],
     theme: 'grid',
     headStyles: { fillColor: [45, 126, 255] },
@@ -83,7 +83,7 @@ export async function generatePdf(
     const perf = computePerformance(businesses, transactions, 'mes');
     autoTable(doc, {
       startY: (doc as any).lastAutoTable.finalY + 8,
-      head: [['Empresa', 'Sector', 'Ventas', 'Compras', 'Rentabilidad', 'Margen']],
+      head: [['Empresa', 'Sector', 'Ingresos', 'Costos', 'Rentabilidad', 'Margen']],
       body: perf
         .sort((a, b) => b.rentabilidad - a.rentabilidad)
         .map((p) => [
@@ -147,8 +147,8 @@ export async function generateExcel(
   const perf = computePerformance(businesses, transactions, 'mes').map((p) => ({
     Empresa: p.business.nombre,
     Sector: p.business.sector,
-    Ventas: Math.round(p.ingresos),
-    Compras: Math.round(p.egresos),
+    Ingresos: Math.round(p.ingresos),
+    Costos: Math.round(p.egresos),
     Rentabilidad: Math.round(p.rentabilidad),
     'Margen %': Number(p.margen.toFixed(1)),
   }));

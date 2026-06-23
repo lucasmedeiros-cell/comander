@@ -33,8 +33,8 @@ const COLORS: Record<string, string> = {
 };
 
 const LABELS: Record<string, string> = {
-  ingresos: 'Ventas',
-  egresos: 'Compras',
+  ingresos: 'Ingresos',
+  egresos: 'Costos',
   rentabilidad: 'Rentabilidad',
 };
 

@@ -134,8 +134,8 @@ export const DEMO_INTEGRATIONS: Integration[] = [
 export const DEMO_ALERTS: Alert[] = [
   { id: 'a1', type: 'API_ERROR', severity: 'CRITICAL', title: 'Error de API en Café del Puerto', message: 'La integración con QuickBooks devuelve errores 401. Revisa el token.', businessId: 'b4', read: false, createdAt: new Date(Date.now() - 18 * 60000).toISOString() },
   { id: 'a2', type: 'EMPRESA_DESCONECTADA', severity: 'WARNING', title: 'Mare Inmobiliaria sin sincronizar', message: 'No se reciben datos hace más de 48 horas.', businessId: 'b5', read: false, createdAt: new Date(Date.now() - 130 * 60000).toISOString() },
-  { id: 'a3', type: 'EGRESOS_SUBEN', severity: 'WARNING', title: 'Compras al alza en Aurora Retail', message: 'Las compras subieron 14% frente a la semana pasada.', businessId: 'b2', read: false, createdAt: new Date(Date.now() - 240 * 60000).toISOString() },
-  { id: 'a4', type: 'INGRESOS_CAEN', severity: 'INFO', title: 'Ventas estables en Café del Puerto', message: 'Variación menor al 3% en los últimos 7 días.', businessId: 'b4', read: true, createdAt: new Date(Date.now() - 600 * 60000).toISOString() },
+  { id: 'a3', type: 'EGRESOS_SUBEN', severity: 'WARNING', title: 'Costos al alza en Aurora Retail', message: 'Las costos subieron 14% frente a la semana pasada.', businessId: 'b2', read: false, createdAt: new Date(Date.now() - 240 * 60000).toISOString() },
+  { id: 'a4', type: 'INGRESOS_CAEN', severity: 'INFO', title: 'Ingresos estables en Café del Puerto', message: 'Variación menor al 3% en los últimos 7 días.', businessId: 'b4', read: true, createdAt: new Date(Date.now() - 600 * 60000).toISOString() },
   { id: 'a5', type: 'COMPORTAMIENTO_INUSUAL', severity: 'INFO', title: 'Pico de ingresos en NovaTech Studio', message: 'Crecimiento del 21% respecto al mes anterior. ¡Buen trabajo!', businessId: 'b3', read: true, createdAt: new Date(Date.now() - 900 * 60000).toISOString() },
 ];
 

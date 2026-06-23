@@ -3,19 +3,22 @@
 import * as React from 'react';
 import { motion } from 'framer-motion';
 import { useTheme } from 'next-themes';
-import { Check, EyeOff, Moon, Palette, PlayCircle, Sparkles, Sun } from 'lucide-react';
+import { Check, EyeOff, Fingerprint, Moon, Palette, PlayCircle, Sparkles, Sun } from 'lucide-react';
+import { toast } from 'sonner';
 import { PageHeader } from '@/components/dashboard/PageHeader';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
-import { useSettings } from '@/lib/store';
+import { useSettings, useAuth } from '@/lib/store';
 import { THEMES, getTheme } from '@/lib/themes';
 import { useMounted } from '@/lib/use-mounted';
+import { biometricAvailable, disableBiometric, isBiometricEnabled, registerBiometric } from '@/lib/webauthn';
 import { cn } from '@/lib/utils';
 
 export default function ConfiguracionPage() {
   const mounted = useMounted();
   const { theme, setTheme } = useTheme();
+  const user = useAuth((s) => s.user);
   const {
     themeId,
     animationsEnabled,
@@ -31,6 +34,34 @@ export default function ConfiguracionPage() {
 
   const active = getTheme(themeId);
   const isDark = theme !== 'light';
+
+  // Ingreso con huella (WebAuthn) — gestión por dispositivo.
+  const [bioSupported, setBioSupported] = React.useState(false);
+  const [bioOn, setBioOn] = React.useState(false);
+  React.useEffect(() => {
+    let active = true;
+    (async () => {
+      const supported = await biometricAvailable();
+      if (!active) return;
+      setBioSupported(supported);
+      setBioOn(isBiometricEnabled());
+    })();
+    return () => {
+      active = false;
+    };
+  }, []);
+
+  async function toggleBiometric(v: boolean) {
+    if (v) {
+      const ok = await registerBiometric(user?.email ?? 'demo@comander.app');
+      setBioOn(ok);
+      toast[ok ? 'success' : 'error'](ok ? 'Ingreso con huella activado' : 'No se pudo activar la huella');
+    } else {
+      disableBiometric();
+      setBioOn(false);
+      toast.success('Ingreso con huella desactivado');
+    }
+  }
 
   return (
     <div className="space-y-6">
@@ -158,6 +189,27 @@ export default function ConfiguracionPage() {
                 />
               </CardContent>
             </Card>
+
+            {/* Seguridad — Ingreso con huella (solo si el dispositivo lo soporta) */}
+            {bioSupported && (
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2 text-base">
+                    <Fingerprint className="h-4 w-4 text-primary" /> Seguridad
+                  </CardTitle>
+                  <p className="text-xs text-muted-foreground">Acceso biométrico de este dispositivo.</p>
+                </CardHeader>
+                <CardContent>
+                  <SettingRow
+                    title="Ingresar con huella"
+                    desc="Permite entrar con tu huella (o rostro) sin escribir tu número en este dispositivo."
+                    icon={<Fingerprint className="h-4 w-4" />}
+                    checked={bioOn}
+                    onChange={toggleBiometric}
+                  />
+                </CardContent>
+              </Card>
+            )}
       </motion.div>
     </div>
   );

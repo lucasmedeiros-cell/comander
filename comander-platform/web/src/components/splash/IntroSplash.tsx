@@ -117,7 +117,7 @@ export function IntroSplash({ onComplete }: IntroSplashProps) {
   return (
     <div
       className="fixed inset-0 z-[100] flex items-center justify-center overflow-hidden bg-black"
-      style={{ width: '100vw', height: '100vh' }}
+      style={{ width: '100%', height: '100%' }}
     >
       {/* Video — centrado, proporción intacta, con sonido. */}
       <motion.video

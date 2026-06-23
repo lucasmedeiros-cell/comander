@@ -102,15 +102,15 @@
   /* ───── Tipografía fluida (responsive sin breakpoints) ─────
      Escalan entre móvil (320px) y desktop (2560px) con clamp(). */
   .fluid-hero {
-    font-size: clamp(1.6rem, 8vw, 3.5rem);
-    line-height: 1.05;
+    font-size: clamp(1.9rem, 9vw, 4.25rem);
+    line-height: 1.04;
   }
   .fluid-amount {
-    font-size: clamp(1.25rem, 5.5vw, 2.25rem);
+    font-size: clamp(1.4rem, 6vw, 2.5rem);
     line-height: 1.05;
   }
   .fluid-amount-sm {
-    font-size: clamp(1.05rem, 4.2vw, 1.5rem);
+    font-size: clamp(1.15rem, 4.8vw, 1.7rem);
     line-height: 1.1;
   }
   .fluid-title {

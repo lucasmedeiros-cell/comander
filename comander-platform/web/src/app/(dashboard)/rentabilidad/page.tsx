@@ -57,7 +57,7 @@ export default function RentabilidadPage() {
     <div className="space-y-6">
       <PageHeader
         title="Rentabilidad"
-        subtitle="Rentabilidad = Ventas − Compras. Ranking, evolución y tendencias por empresa."
+        subtitle="Rentabilidad = Ingresos − Costos. Ranking, evolución y tendencias por empresa."
       >
         <RangeChips value={range} onChange={setRange} />
         <HideBalancesToggle />

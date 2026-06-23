@@ -159,8 +159,8 @@ function EmpresaDetalleContent() {
 
           {/* KPIs ejecutivos con números protagonistas */}
           <div className="grid grid-cols-2 gap-px border-t border-border bg-border lg:grid-cols-4">
-            <BigStat label="Ventas" value={perf.ingresos} icon={ShoppingCart} tone="text-brand" money />
-            <BigStat label="Compras" value={perf.egresos} icon={ShoppingBag} tone="text-warning" money />
+            <BigStat label="Ingresos" value={perf.ingresos} icon={ShoppingCart} tone="text-brand" money />
+            <BigStat label="Costos" value={perf.egresos} icon={ShoppingBag} tone="text-warning" money />
             <BigStat
               label={gananciaPositiva ? 'Ganancia' : 'Pérdida'}
               value={perf.rentabilidad}

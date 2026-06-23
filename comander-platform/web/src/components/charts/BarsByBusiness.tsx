@@ -64,7 +64,7 @@ function BarsByBusinessImpl({ data, height = 300, name = 'Valor', color = '#2D7E
           </>
         )}
         <Tooltip content={<ChartTooltip />} cursor={{ fill: 'hsl(var(--muted) / 0.4)' }} />
-        <Bar dataKey="value" name={name} radius={vertical ? [0, 6, 6, 0] : [6, 6, 0, 0]} maxBarSize={48} isAnimationActive={animate} animationDuration={1100} animationEasing="ease-out">
+        <Bar dataKey="value" name={name} radius={vertical ? [0, 6, 6, 0] : [6, 6, 0, 0]} maxBarSize={48} isAnimationActive={animate} animationDuration={800} animationEasing="ease-out">
           {data.map((d, i) => (
             <Cell key={i} fill={d.color ?? color} />
           ))}

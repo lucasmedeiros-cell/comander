@@ -19,10 +19,12 @@ interface AnimatedNumberProps {
  * vez). Si las animaciones están desactivadas en preferencias, muestra el valor
  * final de inmediato.
  */
-export function AnimatedNumber({ value, duration = 1500, format }: AnimatedNumberProps) {
+export function AnimatedNumber({ value, duration = 600, format }: AnimatedNumberProps) {
   const animationsEnabled = useSettings((s) => s.animationsEnabled);
   const ref = React.useRef<HTMLSpanElement>(null);
-  const inView = useInView(ref, { once: true, margin: '0px 0px -10% 0px' });
+  // Margen inferior POSITIVO: el conteo arranca un poco antes de que el elemento
+  // entre del todo al viewport (sensación más reactiva, sin esperas).
+  const inView = useInView(ref, { once: true, margin: '0px 0px 10% 0px' });
   const [display, setDisplay] = React.useState(() => format(animationsEnabled ? 0 : value));
 
   React.useEffect(() => {

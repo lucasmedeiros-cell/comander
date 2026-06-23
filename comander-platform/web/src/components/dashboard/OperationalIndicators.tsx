@@ -51,8 +51,8 @@ export function OperationalIndicators({
             key={`${business.id}-${ind.label}`}
             initial={{ opacity: 0, y: 14, scale: 0.97 }}
             whileInView={{ opacity: 1, y: 0, scale: 1 }}
-            viewport={{ once: true, margin: '0px 0px -10% 0px' }}
-            transition={{ duration: 0.45, delay: i * 0.06, ease: [0.16, 1, 0.3, 1] }}
+            viewport={{ once: true, margin: '0px 0px 8% 0px' }}
+            transition={{ duration: 0.32, delay: i * 0.03, ease: [0.16, 1, 0.3, 1] }}
           >
             <Card className="h-full p-4 sm:p-5">
               <span
@@ -62,7 +62,7 @@ export function OperationalIndicators({
                 {ind.emoji}
               </span>
               <p className="fluid-amount-sm mt-3 truncate font-extrabold tracking-tight tabular-nums text-foreground">
-                <AnimatedNumber value={ind.value} format={(n) => number(n)} />
+                <AnimatedNumber value={ind.value} duration={500} format={(n) => number(n)} />
               </p>
               <p className="mt-1.5 text-[11px] font-medium uppercase tracking-[0.12em] text-muted-foreground">
                 {ind.label}

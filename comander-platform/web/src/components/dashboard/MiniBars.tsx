@@ -24,7 +24,7 @@ export function MiniBars({
   height?: number;
 }) {
   const motionOn = useMotionEnabled();
-  const [ref, inView] = useInViewOnce<HTMLDivElement>(undefined, 0.25);
+  const [ref, inView] = useInViewOnce<HTMLDivElement>(undefined, 0.12);
   const max = Math.max(...data.map((d) => d.value), 1);
   const ready = !motionOn || inView;
 
@@ -38,7 +38,7 @@ export function MiniBars({
             <motion.div
               initial={{ height: 0 }}
               animate={{ height: ready ? target : 0 }}
-              transition={{ duration: 1, ease: [0.16, 1, 0.3, 1], delay: motionOn ? i * 0.06 : 0 }}
+              transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1], delay: motionOn ? i * 0.035 : 0 }}
               className={cn('w-full max-w-[44px] rounded-t-xl')}
               style={{ background: `linear-gradient(180deg, ${accent}, ${accent}aa)` }}
             />

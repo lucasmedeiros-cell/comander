@@ -99,7 +99,7 @@ function TrendAreaImpl({ data, height = 300, series = ['ingresos', 'egresos'] }:
               strokeWidth={2.5}
               dot={false}
               isAnimationActive={animate}
-              animationDuration={1400}
+              animationDuration={900}
             />
           ) : (
             <Area
@@ -111,7 +111,7 @@ function TrendAreaImpl({ data, height = 300, series = ['ingresos', 'egresos'] }:
               strokeWidth={2.5}
               fill={`url(#grad-${s})`}
               isAnimationActive={animate}
-              animationDuration={1400}
+              animationDuration={900}
             />
           )
         )}

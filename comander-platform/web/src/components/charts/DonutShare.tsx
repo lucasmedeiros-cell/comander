@@ -44,8 +44,8 @@ function DonutShareImpl({ data, height = 240 }: { data: DonutDatum[]; height?: n
                 paddingAngle={2}
                 stroke="none"
                 isAnimationActive={animate}
-                animationDuration={1200}
-                animationBegin={150}
+                animationDuration={900}
+                animationBegin={0}
               >
                 {data.map((d, i) => (
                   <Cell key={i} fill={d.color} />
@@ -66,7 +66,7 @@ function DonutShareImpl({ data, height = 240 }: { data: DonutDatum[]; height?: n
           <div className="text-center">
             <p className="text-[10px] uppercase tracking-wider text-muted-foreground">Total</p>
             <p className="text-lg font-bold">
-              <Money value={total} compact count duration={1200} />
+              <Money value={total} compact count duration={900} />
             </p>
           </div>
         </div>
@@ -81,7 +81,7 @@ function DonutShareImpl({ data, height = 240 }: { data: DonutDatum[]; height?: n
                 {d.label}
               </span>
               <span className="font-medium tabular-nums">
-                <AnimatedNumber value={pct} duration={1200} format={(n) => `${Math.round(n)}%`} />
+                <AnimatedNumber value={pct} duration={900} format={(n) => `${Math.round(n)}%`} />
               </span>
             </div>
           );

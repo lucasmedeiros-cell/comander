@@ -88,19 +88,14 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="relative grid min-h-screen place-items-center overflow-hidden bg-[#070b18] px-6 py-12">
-      {/* Glows de marca de fondo */}
-      <motion.div
+    <div
+      className="relative grid min-h-screen place-items-center overflow-hidden px-6 py-12"
+      style={{ background: 'radial-gradient(135% 95% at 50% 0%, #04101e 0%, #020814 52%, #000000 100%)' }}
+    >
+      {/* Halo azul MUY sutil detrás del logo (integra el branding sin separar). */}
+      <div
         aria-hidden
-        className="pointer-events-none absolute -top-24 left-1/2 h-[34rem] w-[34rem] -translate-x-1/2 rounded-full bg-brand/25 blur-[130px]"
-        animate={{ opacity: [0.4, 0.65, 0.4], scale: [0.9, 1.1, 0.9] }}
-        transition={{ duration: 7, repeat: Infinity }}
-      />
-      <motion.div
-        aria-hidden
-        className="pointer-events-none absolute bottom-0 right-0 h-[26rem] w-[26rem] rounded-full bg-purple/20 blur-[120px]"
-        animate={{ scale: [1.1, 0.9, 1.1] }}
-        transition={{ duration: 9, repeat: Infinity }}
+        className="pointer-events-none absolute left-1/2 top-[18%] h-[24rem] w-[24rem] -translate-x-1/2 rounded-full bg-brand/10 blur-[120px]"
       />
 
       <motion.div
@@ -131,7 +126,7 @@ export default function LoginPage() {
                 size="lg"
                 onClick={enterWithBiometric}
                 disabled={bioBusy}
-                className="h-14 w-full text-base"
+                className="h-14 w-full text-base shadow-[0_12px_40px_-12px] shadow-brand/70 ring-1 ring-brand/30"
               >
                 {bioBusy ? <Loader2 className="h-5 w-5 animate-spin" /> : (
                   <>

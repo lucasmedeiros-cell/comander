@@ -3,7 +3,7 @@
 import * as React from 'react';
 import { motion } from 'framer-motion';
 import { useTheme } from 'next-themes';
-import { Check, EyeOff, Fingerprint, Moon, Palette, PlayCircle, Sparkles, Sun } from 'lucide-react';
+import { Check, Coins, EyeOff, Fingerprint, Moon, Palette, PlayCircle, Sparkles, Sun } from 'lucide-react';
 import { toast } from 'sonner';
 import { PageHeader } from '@/components/dashboard/PageHeader';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -24,11 +24,13 @@ export default function ConfiguracionPage() {
     animationsEnabled,
     introEnabled,
     reportsEnabled,
+    currency,
     balancesHidden,
     setThemeId,
     setAnimationsEnabled,
     setIntroEnabled,
     setReportsEnabled,
+    setCurrency,
     setBalancesHidden,
   } = useSettings();
 
@@ -159,6 +161,36 @@ export default function ConfiguracionPage() {
                   checked={mounted ? reportsEnabled : false}
                   onChange={setReportsEnabled}
                 />
+                {/* Moneda: Bolivianos / Dólares */}
+                <div className="flex items-center justify-between gap-4 py-4">
+                  <div className="flex items-start gap-3">
+                    <span className="mt-0.5 text-muted-foreground"><Coins className="h-4 w-4" /></span>
+                    <div>
+                      <Label className="text-sm font-medium">Moneda</Label>
+                      <p className="mt-0.5 text-xs text-muted-foreground">Cómo se muestran los montos en toda la app.</p>
+                    </div>
+                  </div>
+                  <div className="flex shrink-0 items-center gap-1 rounded-xl border border-border bg-muted/40 p-1">
+                    {([
+                      ['BOB', 'Bs'],
+                      ['USD', 'US$'],
+                    ] as const).map(([cur, lbl]) => (
+                      <button
+                        key={cur}
+                        type="button"
+                        onClick={() => setCurrency(cur)}
+                        className={cn(
+                          'rounded-lg px-3 py-1.5 text-xs font-semibold transition-colors',
+                          (mounted ? currency : 'BOB') === cur
+                            ? 'bg-primary text-primary-foreground'
+                            : 'text-muted-foreground hover:text-foreground'
+                        )}
+                      >
+                        {lbl}
+                      </button>
+                    ))}
+                  </div>
+                </div>
                 <SettingRow
                   title="Ocultar Saldos"
                   desc="Modo privacidad: oculta todos los valores monetarios para reuniones o espacios públicos."

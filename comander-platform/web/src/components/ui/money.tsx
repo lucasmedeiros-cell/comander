@@ -21,10 +21,11 @@ export function useBalancesHidden(): boolean {
  */
 export function useMaskedMoney() {
   const hidden = useBalancesHidden();
+  const currency = useSettings((s) => s.currency);
   return React.useCallback(
     (value: number, opts?: { compact?: boolean; decimals?: number }) =>
-      hidden ? MONEY_MASK : money(value, opts),
-    [hidden]
+      hidden ? MONEY_MASK : money(value, { ...opts, currency }),
+    [hidden, currency]
   );
 }
 
@@ -80,10 +81,11 @@ interface MoneyProps {
  */
 export function Money({ value, compact, decimals, count = false, duration, className }: MoneyProps) {
   const hidden = useBalancesHidden();
+  const currency = useSettings((s) => s.currency);
   const inner = count ? (
-    <AnimatedNumber value={value} duration={duration} format={(n) => money(n, { compact, decimals })} />
+    <AnimatedNumber key={currency} value={value} duration={duration} format={(n) => money(n, { compact, decimals, currency })} />
   ) : (
-    money(value, { compact, decimals })
+    money(value, { compact, decimals, currency })
   );
   return (
     <MaskFade hidden={hidden} className={className}>

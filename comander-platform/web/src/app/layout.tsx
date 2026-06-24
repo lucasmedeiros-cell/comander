@@ -3,16 +3,20 @@ import './globals.css';
 import { Providers } from '@/components/providers';
 
 export const metadata: Metadata = {
-  title: 'COMANDER — Centro de control empresarial',
+  title: 'COMANDER — Centro de Inteligencia Empresarial',
   description:
-    'Dashboard ejecutivo multiempresa. Monitorea ventas, compras y rentabilidad de todos tus negocios en tiempo real.',
-  icons: { icon: '/logo.png' },
+    'Dashboard ejecutivo multiempresa. Monitorea ingresos, costos y ganancia de todos tus negocios en tiempo real.',
+  icons: { icon: '/logo.png', apple: '/icons/icon-192.png' },
+  manifest: '/manifest.webmanifest',
+  appleWebApp: { capable: true, statusBarStyle: 'black-translucent', title: 'COMANDER' },
 };
 
 export const viewport: Viewport = {
-  themeColor: '#010512',
+  themeColor: '#000000',
   width: 'device-width',
   initialScale: 1,
+  maximumScale: 1,
+  viewportFit: 'cover',
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

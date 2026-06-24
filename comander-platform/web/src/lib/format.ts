@@ -1,14 +1,23 @@
-// Formateadores en español (es-CO por defecto; moneda "Bs").
+// Formateadores en español (es-CO). Solo dos monedas: Bolivianos y Dólares.
 
-const CURRENCY_PREFIX = 'Bs';
+export type Currency = 'BOB' | 'USD';
 
-export function money(value: number, opts?: { compact?: boolean; decimals?: number }): string {
-  const { compact = false, decimals } = opts ?? {};
+// Los montos base están en Bolivianos. Para mostrar en USD se divide por el
+// tipo de cambio. (Tipo de cambio referencial Bs por 1 US$.)
+const RATE_BS_PER_USD = 6.96;
+const SYMBOL: Record<Currency, string> = { BOB: 'Bs', USD: 'US$' };
+
+export function money(
+  value: number,
+  opts?: { compact?: boolean; decimals?: number; currency?: Currency }
+): string {
+  const { compact = false, decimals, currency = 'BOB' } = opts ?? {};
+  const amount = currency === 'USD' ? value / RATE_BS_PER_USD : value;
   const n = new Intl.NumberFormat('es-CO', {
     notation: compact ? 'compact' : 'standard',
     maximumFractionDigits: decimals ?? (compact ? 1 : 0),
-  }).format(value);
-  return `${CURRENCY_PREFIX} ${n}`;
+  }).format(amount);
+  return `${SYMBOL[currency]} ${n}`;
 }
 
 export function number(value: number, compact = false): string {

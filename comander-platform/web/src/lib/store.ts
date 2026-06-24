@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import type { User } from '@/types';
+import type { Currency } from '@/lib/format';
 import { DEMO_USER } from '@/lib/mock-data';
 
 interface AuthState {
@@ -67,12 +68,15 @@ interface SettingsState {
   animationsEnabled: boolean;
   introEnabled: boolean;
   reportsEnabled: boolean;
+  /** Moneda de visualización: Bolivianos o Dólares. */
+  currency: Currency;
   /** Modo privacidad: oculta todos los valores monetarios de la app. */
   balancesHidden: boolean;
   setThemeId: (id: ThemeId) => void;
   setAnimationsEnabled: (v: boolean) => void;
   setIntroEnabled: (v: boolean) => void;
   setReportsEnabled: (v: boolean) => void;
+  setCurrency: (c: Currency) => void;
   setBalancesHidden: (v: boolean) => void;
   toggleBalances: () => void;
 }
@@ -84,11 +88,13 @@ export const useSettings = create<SettingsState>()(
       animationsEnabled: true,
       introEnabled: true,
       reportsEnabled: false, // los reportes están desactivados por defecto
+      currency: 'BOB',
       balancesHidden: false,
       setThemeId: (themeId) => set({ themeId }),
       setAnimationsEnabled: (animationsEnabled) => set({ animationsEnabled }),
       setIntroEnabled: (introEnabled) => set({ introEnabled }),
       setReportsEnabled: (reportsEnabled) => set({ reportsEnabled }),
+      setCurrency: (currency) => set({ currency }),
       setBalancesHidden: (balancesHidden) => set({ balancesHidden }),
       toggleBalances: () => set((s) => ({ balancesHidden: !s.balancesHidden })),
     }),
@@ -99,6 +105,7 @@ export const useSettings = create<SettingsState>()(
         animationsEnabled: s.animationsEnabled,
         introEnabled: s.introEnabled,
         reportsEnabled: s.reportsEnabled,
+        currency: s.currency,
         balancesHidden: s.balancesHidden,
       }),
     }

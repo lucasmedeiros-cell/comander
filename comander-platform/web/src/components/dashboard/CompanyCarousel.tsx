@@ -38,34 +38,6 @@ export function CompanyCarousel({ businesses, selectedId, onSelect }: CompanyCar
     el.scrollBy({ left: dir * amount, behavior: 'smooth' });
   }, []);
 
-  // Auto-desplazamiento suave cuando hay muchas empresas (se pausa al interactuar).
-  React.useEffect(() => {
-    const el = trackRef.current;
-    if (!el || businesses.length <= 4) return;
-    let paused = false;
-    const pause = () => {
-      paused = true;
-    };
-    const resume = () => {
-      paused = false;
-    };
-    el.addEventListener('pointerenter', pause);
-    el.addEventListener('pointerdown', pause);
-    el.addEventListener('pointerleave', resume);
-    const t = setInterval(() => {
-      if (paused) return;
-      const atEnd = el.scrollLeft + el.clientWidth >= el.scrollWidth - 4;
-      if (atEnd) el.scrollTo({ left: 0, behavior: 'smooth' });
-      else scrollByCards(1);
-    }, 3200);
-    return () => {
-      clearInterval(t);
-      el.removeEventListener('pointerenter', pause);
-      el.removeEventListener('pointerdown', pause);
-      el.removeEventListener('pointerleave', resume);
-    };
-  }, [businesses.length, scrollByCards]);
-
   if (businesses.length === 0) return null;
 
   return (

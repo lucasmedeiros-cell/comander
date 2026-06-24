@@ -35,10 +35,10 @@ interface StatBlockProps {
 }
 
 const SIZES = {
-  sm: { tile: 'h-11 w-11', icon: 'h-6 w-6', value: 'fluid-amount-sm', label: 'text-[10px]' },
-  md: { tile: 'h-12 w-12', icon: 'h-6 w-6', value: 'fluid-amount-sm', label: 'text-[11px]' },
-  lg: { tile: 'h-14 w-14', icon: 'h-7 w-7', value: 'fluid-amount', label: 'text-xs' },
-  xl: { tile: 'h-16 w-16', icon: 'h-8 w-8', value: 'fluid-amount', label: 'text-xs' },
+  sm: { icon: 'h-6 w-6', value: 'fluid-amount-sm', label: 'text-[10px]' },
+  md: { icon: 'h-7 w-7', value: 'fluid-amount-sm', label: 'text-[11px]' },
+  lg: { icon: 'h-9 w-9', value: 'fluid-amount', label: 'text-xs' },
+  xl: { icon: 'h-10 w-10', value: 'fluid-amount', label: 'text-xs' },
 } as const;
 
 export function StatBlock({
@@ -58,13 +58,12 @@ export function StatBlock({
 
   return (
     <div className={cn('flex gap-3', col ? 'flex-col items-start' : 'items-center', className)}>
-      {/* 1 · Ícono grande (protagonista) */}
-      <span
-        className={cn('grid shrink-0 place-items-center rounded-2xl', s.tile)}
-        style={{ background: `${accent}1f`, color: accent }}
-      >
-        <Icon className={s.icon} />
-      </span>
+      {/* 1 · Ícono integrado a la tarjeta: sin caja ni borde, color de acento
+             directo + resplandor sutil (drop-shadow). */}
+      <Icon
+        className={cn('shrink-0 transition-all duration-200', s.icon)}
+        style={{ color: accent, filter: `drop-shadow(0 0 12px ${accent}55)` }}
+      />
 
       <div className={cn('min-w-0', !col && 'flex-1')}>
         {/* 2 · Monto grande con CountUp al entrar al viewport */}

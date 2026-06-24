@@ -8,6 +8,9 @@ const nextConfig = {
   output: 'export',
   // next/image necesita un servidor para optimizar; en export se desactiva.
   images: { unoptimized: true },
+  // Rutas con barra final → genera carpeta/index.html. Resuelve limpio tanto en
+  // Netlify como dentro del contenedor nativo (Capacitor) al abrir /inicio, etc.
+  trailingSlash: true,
 };
 
 export default nextConfig;

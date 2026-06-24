@@ -1,10 +1,12 @@
-import { Building2, Home, Settings, type LucideIcon } from 'lucide-react';
+import { Building2, FileText, Home, Settings, type LucideIcon } from 'lucide-react';
 
 export interface NavItem {
   href: string;
   label: string;
   icon: LucideIcon;
   badgeKey?: 'alertas';
+  /** Solo se muestra si el módulo de Reportes está habilitado en Configuración. */
+  requiresReports?: boolean;
 }
 
 export interface NavSection {
@@ -19,6 +21,7 @@ export const NAV: NavSection[] = [
     items: [
       { href: '/inicio', label: 'Inicio', icon: Home },
       { href: '/empresas', label: 'Empresas', icon: Building2 },
+      { href: '/reportes', label: 'Reportes', icon: FileText, requiresReports: true },
       { href: '/configuracion', label: 'Configuración', icon: Settings },
     ],
   },

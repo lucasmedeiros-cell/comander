@@ -301,10 +301,8 @@ function BigStat({
 }) {
   const inner = (
     <div className="flex flex-col gap-2 bg-card p-4 transition-colors hover:bg-accent/40 sm:p-5">
-      {/* 1 · Ícono grande (tile de acento) */}
-      <span className={cn('grid h-11 w-11 place-items-center rounded-2xl bg-muted/60', tone)}>
-        <Icon className="h-6 w-6" />
-      </span>
+      {/* 1 · Ícono integrado (sin caja): color de categoría + halo sutil */}
+      <Icon className={cn('icon-glow h-7 w-7 shrink-0', tone)} />
       {/* 2 · Monto grande con CountUp (tipografía fluida) */}
       <span className={cn('fluid-amount block truncate font-extrabold tracking-tight tabular-nums', tone)}>
         {isMoney ? <Money value={value} compact count /> : <AnimatedNumber value={value} format={(n) => number(n)} />}

@@ -56,8 +56,8 @@ export function OperationalIndicators({
           >
             <Card className="h-full p-4 sm:p-5">
               <span
-                className="grid h-12 w-12 place-items-center rounded-2xl text-2xl"
-                style={{ background: `${ind.accent}1f` }}
+                className="block text-3xl leading-none"
+                style={{ filter: `drop-shadow(0 0 12px ${ind.accent}66)` }}
               >
                 {ind.emoji}
               </span>

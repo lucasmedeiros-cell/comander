@@ -5,6 +5,8 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { ALL_ITEMS } from './nav-config';
+import { useSettings } from '@/lib/store';
+import { useMounted } from '@/lib/use-mounted';
 import { cn } from '@/lib/utils';
 
 interface NavLinksProps {
@@ -25,10 +27,16 @@ interface NavLinksProps {
  */
 export function NavLinks({ collapsed = false, onNavigate, layoutId = 'nav-active', stagger = false }: NavLinksProps) {
   const pathname = usePathname();
+  const reportsEnabled = useSettings((s) => s.reportsEnabled);
+  const mounted = useMounted();
+
+  // Reportes solo aparece si está habilitado en Configuración (tras montar,
+  // para evitar desajustes de hidratación con el valor persistido).
+  const items = ALL_ITEMS.filter((it) => !it.requiresReports || (mounted && reportsEnabled));
 
   return (
     <div className="space-y-1.5">
-      {ALL_ITEMS.map(({ href, label, icon: Icon }, i) => {
+      {items.map(({ href, label, icon: Icon }, i) => {
         const active = pathname === href || pathname.startsWith(href + '/');
 
         const inner = (

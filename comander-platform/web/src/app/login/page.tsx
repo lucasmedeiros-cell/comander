@@ -88,10 +88,7 @@ export default function LoginPage() {
   }
 
   return (
-    <div
-      className="relative grid min-h-screen place-items-center overflow-hidden px-6 py-12"
-      style={{ background: 'radial-gradient(135% 95% at 50% 0%, #04101e 0%, #020814 52%, #000000 100%)' }}
-    >
+    <div className="relative grid min-h-screen place-items-center overflow-hidden bg-black px-6 py-12">
       {/* Halo azul MUY sutil detrás del logo (integra el branding sin separar). */}
       <div
         aria-hidden

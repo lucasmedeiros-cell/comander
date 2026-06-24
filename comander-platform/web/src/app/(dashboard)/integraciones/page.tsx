@@ -151,9 +151,7 @@ function StatCard({ label, value, icon: Icon, color, active, onClick }: { label:
           active ? 'border-primary/50 ring-1 ring-primary/30' : 'hover:border-primary/30'
         )}
       >
-        <span className="grid h-10 w-10 place-items-center rounded-xl" style={{ background: `${color}1f`, color }}>
-          <Icon className="h-5 w-5" />
-        </span>
+        <Icon className="h-6 w-6 shrink-0" style={{ color, filter: `drop-shadow(0 0 10px ${color}66)` }} />
         <div>
           <p className="text-xl font-bold">{value}</p>
           <p className="text-xs text-muted-foreground">{label}</p>

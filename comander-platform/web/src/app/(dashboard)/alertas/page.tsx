@@ -101,9 +101,7 @@ export default function AlertasPage() {
                   active ? 'border-primary/50 ring-1 ring-primary/30' : 'hover:border-primary/30'
                 )}
               >
-                <span className="grid h-8 w-8 shrink-0 place-items-center rounded-lg" style={{ background: `${color}1f`, color }}>
-                  <Icon className="h-4 w-4" />
-                </span>
+                <Icon className="h-5 w-5 shrink-0" style={{ color, filter: `drop-shadow(0 0 10px ${color}66)` }} />
                 <div className="min-w-0">
                   <p className="truncate text-xs font-medium leading-tight">{label}</p>
                   <p className="text-[10px] text-muted-foreground">{count} alerta(s)</p>
@@ -126,9 +124,7 @@ export default function AlertasPage() {
           return (
             <motion.div key={a.id} initial={{ opacity: 0, y: 12 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: '0px 0px -10% 0px' }} transition={{ delay: Math.min(i, 6) * 0.04 }}>
               <Card className={cn('flex items-start gap-4 p-4 transition-colors', sev.ring, !a.read && 'bg-card', a.read && 'opacity-70')}>
-                <span className={cn('mt-0.5 grid h-10 w-10 shrink-0 place-items-center rounded-xl', a.severity === 'CRITICAL' ? 'bg-danger/12 text-danger' : a.severity === 'WARNING' ? 'bg-warning/12 text-warning' : 'bg-brand/12 text-brand')}>
-                  <Icon className="h-5 w-5" />
-                </span>
+                <Icon className={cn('icon-glow mt-0.5 h-6 w-6 shrink-0', a.severity === 'CRITICAL' ? 'text-danger' : a.severity === 'WARNING' ? 'text-warning' : 'text-brand')} />
                 <div className="min-w-0 flex-1">
                   <div className="flex flex-wrap items-center gap-2">
                     <p className="text-sm font-semibold">{a.title}</p>

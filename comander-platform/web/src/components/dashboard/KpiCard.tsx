@@ -65,12 +65,10 @@ export function KpiCard({
         style={{ background: accent }}
       />
       <div className="flex items-start justify-between">
-        <div
-          className="grid h-10 w-10 place-items-center rounded-xl"
-          style={{ background: `${accent}1f`, color: accent }}
-        >
-          <Icon className="h-5 w-5" />
-        </div>
+        <Icon
+          className="h-6 w-6 shrink-0 transition-all duration-200"
+          style={{ color: accent, filter: `drop-shadow(0 0 12px ${accent}55)` }}
+        />
         {delta !== undefined && <DeltaBadge value={delta} positiveIsGood={positiveIsGood} />}
       </div>
       <p className="mt-4 text-2xl font-bold tracking-tight text-foreground">

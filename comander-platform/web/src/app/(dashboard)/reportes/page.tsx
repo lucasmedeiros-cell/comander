@@ -66,9 +66,7 @@ export default function ReportesPage() {
           transition={{ duration: 0.4 }}
         >
           <Card className="mx-auto max-w-lg p-8 text-center">
-            <span className="mx-auto grid h-12 w-12 place-items-center rounded-2xl bg-primary/10 text-primary">
-              <FileText className="h-6 w-6" />
-            </span>
+            <FileText className="icon-glow mx-auto h-10 w-10 text-primary" />
             <h3 className="mt-4 text-lg font-semibold">Los reportes están desactivados</h3>
             <p className="mt-1.5 text-sm text-muted-foreground">
               Activa el módulo de reportes desde Configuración para generar documentos en PDF y Excel.
@@ -155,9 +153,7 @@ export default function ReportesPage() {
                 onClick={() => pdf(r.kind)}
                 className="group flex items-start gap-3 rounded-xl border border-border p-4 text-left transition-all hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-md"
               >
-                <span className="grid h-9 w-9 shrink-0 place-items-center rounded-lg bg-danger/10 text-danger">
-                  <FileText className="h-4 w-4" />
-                </span>
+                <FileText className="icon-glow h-5 w-5 shrink-0 text-danger" />
                 <div className="min-w-0 flex-1">
                   <p className="text-sm font-semibold">{r.label}</p>
                   <p className="mt-0.5 text-xs text-muted-foreground">{r.desc}</p>
@@ -208,9 +204,7 @@ function ExcelOption({ title, desc, onClick, accent }: { title: string; desc: st
         accent ? 'border-success/40 bg-success/5' : 'border-border'
       )}
     >
-      <span className="grid h-9 w-9 shrink-0 place-items-center rounded-lg bg-success/10 text-success">
-        <FileSpreadsheet className="h-4 w-4" />
-      </span>
+      <FileSpreadsheet className="icon-glow h-5 w-5 shrink-0 text-success" />
       <div className="min-w-0 flex-1">
         <p className="text-sm font-semibold">{title}</p>
         <p className="text-xs text-muted-foreground">{desc}</p>

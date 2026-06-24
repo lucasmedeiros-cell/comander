@@ -126,6 +126,11 @@
     min-height: 44px;
     min-width: 44px;
   }
+  /* Halo difuso para iconos SIN caja: usa el color propio del icono
+     (currentColor) para un brillo sutil que integra el icono con la tarjeta. */
+  .icon-glow {
+    filter: drop-shadow(0 0 9px currentColor);
+  }
 
   .glass {
     @apply backdrop-blur-xl;

@@ -74,13 +74,11 @@ export function MetricCard({
           style={{ background: accent }}
         />
 
-        {/* 1) ÍCONO */}
-        <div
-          className="grid h-12 w-12 place-items-center rounded-2xl"
-          style={{ background: `${accent}1f`, color: accent }}
-        >
-          <Icon className="h-6 w-6" />
-        </div>
+        {/* 1) ÍCONO — integrado a la tarjeta (sin caja), acento + halo sutil */}
+        <Icon
+          className="h-7 w-7 shrink-0 transition-all duration-200"
+          style={{ color: accent, filter: `drop-shadow(0 0 12px ${accent}55)` }}
+        />
 
         {/* 2) MONTO (domina visualmente) */}
         <p className="mt-4 text-4xl font-extrabold leading-none tracking-tight text-foreground">

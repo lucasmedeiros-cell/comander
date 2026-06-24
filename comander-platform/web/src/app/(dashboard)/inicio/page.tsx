@@ -62,9 +62,7 @@ export default function InicioPage() {
   if (!loading && businesses.length === 0) {
     return (
       <Card className="grid place-items-center gap-3 p-12 text-center">
-        <span className="grid h-14 w-14 place-items-center rounded-2xl bg-primary/10 text-primary">
-          <Building2 className="h-7 w-7" />
-        </span>
+        <Building2 className="icon-glow h-12 w-12 text-primary" />
         <p className="text-sm text-muted-foreground">Aún no tienes empresas. Crea la primera para empezar.</p>
         <Button asChild className="mt-1">
           <Link href="/empresas">Crear empresa</Link>

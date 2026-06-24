@@ -43,7 +43,7 @@ function BarsByBusinessImpl({ data, height = 300, name = 'Valor', color = '#2D7E
   const vertical = layout === 'vertical';
 
   return (
-    <div ref={ref} style={{ width: '100%', height }}>
+    <div ref={ref} className="overflow-hidden" style={{ width: '100%', height }}>
       <ResponsiveContainer width="100%" height={height}>
       <BarChart
         key={inView ? 'in' : 'pre'}

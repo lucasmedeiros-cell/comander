@@ -73,7 +73,7 @@ export function OperationalIndicators({
       </div>
 
       {/* Gráfica diaria simple */}
-      <Card className="p-5">
+      <Card className="overflow-hidden p-5">
         <div className="mb-4 flex items-center gap-2">
           <span className="text-lg">{main.emoji}</span>
           <div>

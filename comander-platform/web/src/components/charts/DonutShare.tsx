@@ -31,7 +31,7 @@ function DonutShareImpl({ data, height = 240 }: { data: DonutDatum[]; height?: n
   if (!hasData) return <div ref={ref}><ChartEmpty height={height} /></div>;
 
   return (
-    <div ref={ref} className="flex flex-col items-center gap-4 sm:flex-row">
+    <div ref={ref} className="flex w-full flex-col items-center gap-4 overflow-hidden sm:flex-row">
       <div className="relative" style={{ width: height, height }}>
         <ResponsiveContainer width="100%" height="100%">
             <PieChart key={inView ? 'in' : 'pre'}>

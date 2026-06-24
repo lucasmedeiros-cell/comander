@@ -29,20 +29,20 @@ export function MiniBars({
   const ready = !motionOn || inView;
 
   return (
-    <div ref={ref} className="flex items-end gap-2 sm:gap-3" style={{ height }}>
+    <div ref={ref} className="flex w-full items-end justify-center gap-1.5 overflow-hidden sm:gap-3" style={{ height }}>
       {data.map((d, i) => {
         const target = Math.round((d.value / max) * (height - 40));
         return (
-          <div key={`${d.label}-${i}`} className="flex h-full flex-1 flex-col items-center justify-end gap-1.5">
-            <span className="text-xs font-bold tabular-nums text-foreground">{d.value}</span>
+          <div key={`${d.label}-${i}`} className="flex h-full min-w-0 flex-1 flex-col items-center justify-end gap-1.5">
+            <span className="w-full truncate text-center text-[11px] font-bold tabular-nums text-foreground sm:text-xs">{d.value}</span>
             <motion.div
               initial={{ height: 0 }}
               animate={{ height: ready ? target : 0 }}
               transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1], delay: motionOn ? i * 0.035 : 0 }}
-              className={cn('w-full max-w-[44px] rounded-t-xl')}
+              className={cn('w-full max-w-[40px] rounded-t-xl')}
               style={{ background: `linear-gradient(180deg, ${accent}, ${accent}aa)` }}
             />
-            <span className="truncate text-[10px] font-medium text-muted-foreground">{d.label}</span>
+            <span className="w-full truncate text-center text-[10px] font-medium text-muted-foreground">{d.label}</span>
           </div>
         );
       })}

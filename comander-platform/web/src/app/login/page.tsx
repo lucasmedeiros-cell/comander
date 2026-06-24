@@ -12,8 +12,10 @@ import { useAuth } from '@/lib/store';
 import {
   authenticateBiometric,
   biometricAvailable,
+  biometryKind,
   isBiometricEnabled,
   registerBiometric,
+  type BiometryKind,
 } from '@/lib/webauthn';
 
 /**
@@ -31,12 +33,13 @@ export default function LoginPage() {
   const [bioRegistered, setBioRegistered] = React.useState(false);
   const [enableBio, setEnableBio] = React.useState(true);
   const [bioBusy, setBioBusy] = React.useState(false);
-  const [isIOS, setIsIOS] = React.useState(false);
+  const [bioKind, setBioKind] = React.useState<BiometryKind>('fingerprint');
   const autoTried = React.useRef(false);
 
-  // Etiqueta/ícono biométrico según el dispositivo (iPhone/iPad → Face ID).
-  const BioIcon = isIOS ? ScanFace : Fingerprint;
-  const bioLabel = isIOS ? 'Ingresar con Face ID' : 'Ingresar con huella';
+  // Etiqueta/ícono biométrico según el tipo real del dispositivo.
+  const BioIcon = bioKind === 'face' ? ScanFace : Fingerprint;
+  const bioLabel =
+    bioKind === 'face' ? 'Ingresar con Face ID' : bioKind === 'fingerprint' ? 'Ingresar con huella' : 'Ingresar con biometría';
 
   // Mínimo 7 dígitos (sin prefijo; el usuario escribe solo su número).
   const valid = phone.length >= 7;
@@ -58,8 +61,11 @@ export default function LoginPage() {
     (async () => {
       const supported = await biometricAvailable();
       const registered = isBiometricEnabled();
+      if (supported) {
+        const kind = await biometryKind();
+        if (active) setBioKind(kind);
+      }
       if (!active) return;
-      setIsIOS(/iPad|iPhone|iPod/.test(navigator.userAgent));
       setBioSupported(supported);
       setBioRegistered(supported && registered);
       // Intento automático una sola vez (mejor esfuerzo; si el navegador exige

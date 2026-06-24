@@ -61,7 +61,7 @@ function TrendAreaImpl({ data, height = 300, series = ['ingresos', 'egresos'] }:
   if (!hasData) return <div ref={ref}><ChartEmpty height={height} /></div>;
 
   return (
-    <div ref={ref} style={{ width: '100%', height }}>
+    <div ref={ref} className="overflow-hidden" style={{ width: '100%', height }}>
       <ResponsiveContainer width="100%" height={height}>
       <AreaChart key={inView ? 'in' : 'pre'} data={data} margin={{ top: 10, right: 8, left: -8, bottom: 0 }}>
         <defs>

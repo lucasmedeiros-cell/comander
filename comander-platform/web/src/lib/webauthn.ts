@@ -1,25 +1,92 @@
 'use client';
 
+import { Capacitor } from '@capacitor/core';
+
 // ───────────────────────────────────────────────────────────────────────────
-// Ingreso con huella (WebAuthn / autenticador de plataforma: Touch ID, huella
-// Android, Windows Hello, Face ID).
+// Ingreso biométrico (huella / Face ID / Touch ID).
 //
-// Commander no tiene backend de auth, así que la huella se usa como una "llave
-// local del dispositivo": al activarla se crea una credencial de plataforma y se
-// guarda el correo asociado. En los siguientes ingresos, verificar la huella
-// (userVerification: 'required') restaura la sesión sin escribir el teléfono.
+//  • APK nativo (Capacitor): usa el plugin nativo @aparajita/capacitor-biometric-auth
+//    (BiometricPrompt en Android, Face ID/Touch ID en iOS).
+//  • Web / PWA: usa WebAuthn (autenticador de plataforma del navegador).
 //
-// Requiere contexto seguro (HTTPS o localhost); en Netlify funciona out-of-the-box.
+// En ambos casos NO hay backend: la biometría actúa como una "llave local del
+// dispositivo" — al activarla se guarda el correo y, al verificar la biometría,
+// se restaura la sesión sin escribir el teléfono.
 // ───────────────────────────────────────────────────────────────────────────
 
 const STORAGE_KEY = 'comander-biometric';
 
 interface BiometricRecord {
-  credentialId: string; // base64url del rawId
-  email: string; // identidad para restaurar la sesión
+  email: string;
+  credentialId?: string; // solo WebAuthn (web)
 }
 
-// ─── helpers base64url ⇄ ArrayBuffer ───
+export type BiometryKind = 'face' | 'fingerprint' | 'generic';
+
+const isNative = () => Capacitor.isNativePlatform();
+
+async function plugin() {
+  return import('@aparajita/capacitor-biometric-auth');
+}
+
+// ─── persistencia ───
+export function getBiometric(): BiometricRecord | null {
+  if (typeof window === 'undefined') return null;
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    return raw ? (JSON.parse(raw) as BiometricRecord) : null;
+  } catch {
+    return null;
+  }
+}
+export function isBiometricEnabled(): boolean {
+  return getBiometric() !== null;
+}
+export function disableBiometric(): void {
+  try {
+    localStorage.removeItem(STORAGE_KEY);
+  } catch {
+    /* noop */
+  }
+}
+
+// ─── disponibilidad ───
+export async function biometricAvailable(): Promise<boolean> {
+  if (isNative()) {
+    try {
+      const { BiometricAuth } = await plugin();
+      const res = await BiometricAuth.checkBiometry();
+      return !!res.isAvailable;
+    } catch {
+      return false;
+    }
+  }
+  if (typeof window === 'undefined' || !window.PublicKeyCredential) return false;
+  try {
+    return await PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable();
+  } catch {
+    return false;
+  }
+}
+
+/** Tipo de biometría (para mostrar "Face ID" o "Huella"). */
+export async function biometryKind(): Promise<BiometryKind> {
+  if (isNative()) {
+    try {
+      const { BiometricAuth, BiometryType } = await plugin();
+      const t = (await BiometricAuth.checkBiometry()).biometryType;
+      if (t === BiometryType.faceId || t === BiometryType.faceAuthentication) return 'face';
+      if (t === BiometryType.touchId || t === BiometryType.fingerprintAuthentication) return 'fingerprint';
+      return 'generic';
+    } catch {
+      return 'generic';
+    }
+  }
+  if (typeof navigator !== 'undefined' && /iPad|iPhone|iPod/.test(navigator.userAgent)) return 'face';
+  return 'fingerprint';
+}
+
+// ─── helpers WebAuthn (solo web) ───
 function bufToB64url(buf: ArrayBuffer): string {
   const bytes = new Uint8Array(buf);
   let s = '';
@@ -40,45 +107,26 @@ function randomBytes(n: number): ArrayBuffer {
   return a.buffer as ArrayBuffer;
 }
 
-/** ¿El dispositivo tiene un autenticador de plataforma (huella/rostro) disponible? */
-export async function biometricAvailable(): Promise<boolean> {
-  if (typeof window === 'undefined' || !window.PublicKeyCredential) return false;
-  try {
-    return await PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable();
-  } catch {
-    return false;
-  }
-}
-
-/** Credencial de huella ya registrada en este dispositivo (o null). */
-export function getBiometric(): BiometricRecord | null {
-  if (typeof window === 'undefined') return null;
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    return raw ? (JSON.parse(raw) as BiometricRecord) : null;
-  } catch {
-    return null;
-  }
-}
-
-export function isBiometricEnabled(): boolean {
-  return getBiometric() !== null;
-}
-
-export function disableBiometric(): void {
-  try {
-    localStorage.removeItem(STORAGE_KEY);
-  } catch {
-    /* noop */
-  }
-}
-
-/**
- * Registra la huella para `email`. Debe llamarse dentro de un gesto del usuario.
- * Devuelve true si quedó activada.
- */
+// ─── registro ───
 export async function registerBiometric(email: string): Promise<boolean> {
   if (!(await biometricAvailable())) return false;
+
+  if (isNative()) {
+    try {
+      const { BiometricAuth } = await plugin();
+      await BiometricAuth.authenticate({
+        reason: 'Activa el ingreso biométrico en COMANDER',
+        androidTitle: 'COMANDER',
+        androidSubtitle: 'Verifica tu identidad',
+        allowDeviceCredential: true,
+      });
+      localStorage.setItem(STORAGE_KEY, JSON.stringify({ email } satisfies BiometricRecord));
+      return true;
+    } catch {
+      return false;
+    }
+  }
+
   try {
     const cred = (await navigator.credentials.create({
       publicKey: {
@@ -86,8 +134,8 @@ export async function registerBiometric(email: string): Promise<boolean> {
         rp: { name: 'COMANDER', id: location.hostname },
         user: { id: randomBytes(16), name: email, displayName: email },
         pubKeyCredParams: [
-          { type: 'public-key', alg: -7 }, // ES256
-          { type: 'public-key', alg: -257 }, // RS256
+          { type: 'public-key', alg: -7 },
+          { type: 'public-key', alg: -257 },
         ],
         authenticatorSelection: {
           authenticatorAttachment: 'platform',
@@ -99,29 +147,40 @@ export async function registerBiometric(email: string): Promise<boolean> {
       },
     })) as PublicKeyCredential | null;
     if (!cred) return false;
-    const record: BiometricRecord = { credentialId: bufToB64url(cred.rawId), email };
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(record));
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({ email, credentialId: bufToB64url(cred.rawId) }));
     return true;
   } catch {
     return false;
   }
 }
 
-/**
- * Verifica la huella y devuelve el correo asociado para restaurar la sesión.
- * Devuelve null si no hay credencial, no se verifica, o el usuario cancela.
- */
+// ─── verificación ───
 export async function authenticateBiometric(): Promise<string | null> {
   const record = getBiometric();
-  if (!record || !(await biometricAvailable())) return null;
+  if (!record) return null;
+
+  if (isNative()) {
+    try {
+      const { BiometricAuth } = await plugin();
+      await BiometricAuth.authenticate({
+        reason: 'Ingresa a COMANDER',
+        androidTitle: 'COMANDER',
+        androidSubtitle: 'Ingresar con biometría',
+        allowDeviceCredential: true,
+      });
+      return record.email;
+    } catch {
+      return null;
+    }
+  }
+
+  if (!record.credentialId || !(await biometricAvailable())) return null;
   try {
     const assertion = await navigator.credentials.get({
       publicKey: {
         challenge: randomBytes(32),
         rpId: location.hostname,
-        allowCredentials: [
-          { type: 'public-key', id: b64urlToBuf(record.credentialId), transports: ['internal'] },
-        ],
+        allowCredentials: [{ type: 'public-key', id: b64urlToBuf(record.credentialId), transports: ['internal'] }],
         userVerification: 'required',
         timeout: 60000,
       },

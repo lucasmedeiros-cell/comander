@@ -45,7 +45,7 @@ export function CompanyRanking({
         <span className="h-4 w-1 rounded-full bg-primary" />
         <h2 className="text-sm font-bold tracking-tight">Ranking de Empresas</h2>
       </div>
-      <Card className="p-5">
+      <Card className="overflow-hidden p-5">
         <div ref={ref} className="space-y-4">
           {rows.map((r, i) => (
             <div key={r.id} className="space-y-1.5">

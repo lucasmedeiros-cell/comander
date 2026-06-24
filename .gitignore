@@ -29,3 +29,6 @@ npm-debug.log*
 # Instaladores/binarios sueltos
 *.exe
 *.pdf
+
+# Android Studio
+comander-platform/web/android/.idea/

@@ -20,7 +20,7 @@ import { Volume2 } from 'lucide-react';
 // ─────────────────────────────────────────────────────────────────────────────
 
 const VIDEO_SRC = '/assets/video/intro.mp4';
-const FADE_OUT_MS = 500;
+const FADE_OUT_MS = 350;
 
 let introStarted = false;
 let introCompleted = false;
@@ -119,15 +119,15 @@ export function IntroSplash({ onComplete }: IntroSplashProps) {
       className="fixed inset-0 z-[100] flex items-center justify-center overflow-hidden bg-black"
       style={{ width: '100%', height: '100%' }}
     >
-      {/* Video — centrado, proporción intacta, con sonido. */}
+      {/* Video — a pantalla completa, centrado (object-cover) para una intro premium. */}
       <motion.video
         ref={videoRef}
         playsInline
         preload="auto"
         initial={{ opacity: 0 }}
         animate={{ opacity: fadeOut ? 0 : phase === 'playing' ? 1 : 0 }}
-        transition={{ duration: fadeOut ? FADE_OUT_MS / 1000 : 0.5, ease: 'easeOut' }}
-        className="max-h-full max-w-full object-contain"
+        transition={{ duration: fadeOut ? FADE_OUT_MS / 1000 : 0.35, ease: 'easeOut' }}
+        className="h-full w-full object-cover object-center"
         style={{ width: '100%', height: '100%' }}
       >
         <source src={VIDEO_SRC} type="video/mp4" />

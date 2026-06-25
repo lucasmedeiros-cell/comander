@@ -4,20 +4,24 @@ import Image from 'next/image';
 import { cn } from '@/lib/utils';
 
 interface LogoProps {
-  /** Lado en px (el logo es cuadrado: símbolo + COMANDER + DASHBOARD RESULTS). */
+  /** Alto en px del logo; el ancho se calcula con su proporción real. */
   height?: number;
   className?: string;
 }
 
+// Proporción real del logo recortado (sin márgenes transparentes) → más grande
+// y con las letras (incluido DASHBOARD RESULTS) perfectamente legibles.
+const RATIO = 1.147;
+
 /**
- * Logo COMANDER completo y transparente (/logo-mark.png): símbolo + texto
- * COMANDER + DASHBOARD RESULTS. Sin recuadro ni fondo → se integra con el menú.
- * `object-contain` conserva proporciones (sin recortes ni distorsión).
+ * Logo COMANDER completo y transparente, ajustado (sin recuadro): símbolo +
+ * COMANDER + DASHBOARD RESULTS. `object-contain` conserva proporciones.
  */
-export function Logo({ height = 120, className }: LogoProps) {
+export function Logo({ height = 150, className }: LogoProps) {
+  const width = Math.round(height * RATIO);
   return (
-    <div className={cn('relative', className)} style={{ width: height, height }}>
-      <Image src="/logo-mark.png" alt="COMANDER" fill sizes={`${height}px`} className="object-contain" priority />
+    <div className={cn('relative', className)} style={{ width, height }}>
+      <Image src="/logo-tight.png" alt="COMANDER" fill sizes={`${width}px`} className="object-contain" priority />
     </div>
   );
 }

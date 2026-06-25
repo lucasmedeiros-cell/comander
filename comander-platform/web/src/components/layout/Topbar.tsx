@@ -72,8 +72,8 @@ export function Topbar() {
           />
 
           {/* Logo protagonista (completo, sin recuadro) */}
-          <div className="relative flex items-center justify-center px-6 pb-3 pt-10">
-            <Logo height={132} />
+          <div className="relative flex items-center justify-center px-5 pb-3 pt-10">
+            <Logo height={140} />
           </div>
 
           {/* Navegación pegada al logo */}

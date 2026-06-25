@@ -24,8 +24,8 @@ export function Sidebar() {
       />
 
       {/* ── Logo protagonista (completo, sin recuadro), centrado ── */}
-      <div className={cn('relative flex items-center justify-center', collapsed ? 'px-2 pb-3 pt-5' : 'px-4 pb-3 pt-6')}>
-        <Logo height={collapsed ? 52 : 150} />
+      <div className={cn('relative flex items-center justify-center', collapsed ? 'px-2 pb-3 pt-5' : 'px-3 pb-4 pt-6')}>
+        <Logo height={collapsed ? 50 : 148} />
       </div>
 
       {/* Botón de colapso integrado (aparece al pasar el cursor) */}

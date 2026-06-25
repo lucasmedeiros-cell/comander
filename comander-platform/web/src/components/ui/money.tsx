@@ -8,7 +8,7 @@ import { useMotionEnabled } from '@/lib/use-in-view';
 import { AnimatedNumber } from '@/components/ui/animated-number';
 
 /** Máscara que reemplaza cualquier valor monetario en modo privacidad. */
-export const MONEY_MASK = '••••••••';
+export const MONEY_MASK = '****';
 
 /** Indica si el modo "Ocultar Saldos" está activo. */
 export function useBalancesHidden(): boolean {

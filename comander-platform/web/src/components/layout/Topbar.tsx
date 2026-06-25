@@ -59,22 +59,26 @@ export function Topbar() {
             <Menu className="h-4 w-4" />
           </Button>
         </DialogTrigger>
-        <DialogContent className="left-0 top-0 flex h-full max-w-[280px] translate-x-0 translate-y-0 flex-col gap-0 rounded-none rounded-r-2xl p-0 data-[state=closed]:slide-out-to-left data-[state=open]:slide-in-from-left">
+        <DialogContent
+          className="left-0 top-0 flex h-full max-w-[280px] translate-x-0 translate-y-0 flex-col gap-0 rounded-none rounded-r-2xl border-white/[0.06] p-0 data-[state=closed]:slide-out-to-left data-[state=open]:slide-in-from-left"
+          style={{ background: 'linear-gradient(180deg, #04101e 0%, #020814 60%, #010610 100%)' }}
+        >
           <DialogTitle className="sr-only">Menú de navegación</DialogTitle>
 
-          {/* Header centrado: logo grande + subtítulo */}
-          <div className="flex flex-col items-center px-6 pb-6 pt-10 text-center">
-            <Logo height={104} />
-            <p className="mt-4 text-[10px] font-medium uppercase leading-relaxed tracking-[0.22em] text-muted-foreground">
-              Centro de Inteligencia
-              <br />
-              Empresarial
-            </p>
+          {/* Glow azul corporativo muy sutil */}
+          <div
+            aria-hidden
+            className="pointer-events-none absolute left-1/2 top-6 h-44 w-44 -translate-x-1/2 rounded-full bg-brand/10 blur-[80px]"
+          />
+
+          {/* Logo protagonista (completo, sin recuadro) */}
+          <div className="relative flex items-center justify-center px-6 pb-3 pt-10">
+            <Logo height={132} />
           </div>
 
-          {/* Navegación */}
-          <nav className="flex-1 overflow-y-auto px-4">
-            <p className="px-3 pb-2.5 text-center text-[9.5px] font-semibold uppercase tracking-[0.2em] text-muted-foreground/60">
+          {/* Navegación pegada al logo */}
+          <nav className="relative flex-1 overflow-y-auto px-4 pt-1">
+            <p className="px-3 pb-2 text-[10px] font-semibold uppercase tracking-[0.22em] text-muted-foreground/55">
               Navegación
             </p>
             <NavLinks onNavigate={() => setMobileOpen(false)} layoutId="mobile-nav-active" stagger />

@@ -1,44 +1,52 @@
 'use client';
 
 import * as React from 'react';
-import { AnimatePresence, motion } from 'framer-motion';
-import { Volume2 } from 'lucide-react';
+import Image from 'next/image';
+import { motion } from 'framer-motion';
 
 // ─────────────────────────────────────────────────────────────────────────────
-// INTRO — se reproduce ANTES del Login (Abrir App → Intro → Login → Inicio).
+// SPLASH — El LOGO REAL de COMANDER se CONSTRUYE por piezas (no se rediseña).
 //
-// Reglas:
-//   1. UN SOLO video (/assets/video/intro.mp4) y UNA SOLA reproducción por acceso.
-//      Las guardas a nivel de módulo sobreviven a remontajes (React Strict Mode).
-//   2. Navegación SOLO al terminar el video (evento `ended`), con fade-out.
-//   3. Reproducción automática CON SONIDO. Por política de autoplay de los
-//      navegadores (Chrome/Safari/Firefox), un video que arranca solo sin gesto
-//      previo suele quedar SILENCIADO en dominios sin "media engagement" (p. ej.
-//      producción). En ese caso el video NO se interrumpe: sigue reproduciéndose
-//      en silencio y se ofrece un botón "Activar sonido" que lo activa al
-//      instante (gesto del usuario) sin reiniciar ni recargar.
+// El logo se separó en capas (3 chevrones + COMANDER + DASHBOARD RESULTS) que se
+// ensamblan en secuencia hasta formar el logo exacto:
+//  1) Pantalla negra + fade-in
+//  2) Chevron superior → medio → inferior entran y encajan en su lugar
+//  3) Aparece COMANDER, luego DASHBOARD RESULTS
+//  4) GLOW azul corporativo con pulso lento + flotación sutil + partículas
+//  → Fade-out directo al Login. Solo transform/opacity/filter (GPU), 60 FPS.
 // ─────────────────────────────────────────────────────────────────────────────
 
-const VIDEO_SRC = '/assets/video/intro.mp4';
-const FADE_OUT_MS = 350;
+const EXPO = [0.16, 1, 0.3, 1] as const;
+const TOTAL_MS = 4600; // sincronizado con el audio (~4.6s)
+const FADE_OUT_MS = 500;
+const AUDIO_SRC = '/splash/intro-audio.mp3';
 
-let introStarted = false;
+// Capas del logo (cada PNG es el lienzo completo con solo su pieza).
+const LAYERS = [
+  { src: '/splash/ch1.png', from: -22, delay: 0.25 }, // chevron superior (baja)
+  { src: '/splash/ch2.png', from: -22, delay: 0.45 }, // chevron medio
+  { src: '/splash/ch3.png', from: -22, delay: 0.65 }, // chevron inferior
+  { src: '/splash/word.png', from: 20, delay: 0.95 }, // COMANDER (sube)
+  { src: '/splash/sub.png', from: 16, delay: 1.2 }, // DASHBOARD RESULTS (sube)
+];
+
+const PARTICLES = [
+  { left: '20%', top: '32%', size: 3, delay: 0.3, dur: 6.5 },
+  { left: '80%', top: '28%', size: 3, delay: 1.2, dur: 7 },
+  { left: '32%', top: '72%', size: 2, delay: 0.7, dur: 6 },
+  { left: '70%', top: '74%', size: 3, delay: 1.7, dur: 7.5 },
+  { left: '86%', top: '52%', size: 2, delay: 0.5, dur: 8 },
+];
+
 let introCompleted = false;
 
 interface IntroSplashProps {
-  /** Se invoca SOLO al terminar el video (o ante un error irrecuperable). */
   onComplete: () => void;
 }
 
 export function IntroSplash({ onComplete }: IntroSplashProps) {
-  const videoRef = React.useRef<HTMLVideoElement>(null);
-  const startedRef = React.useRef(false);
-
-  const [phase, setPhase] = React.useState<'loading' | 'playing'>('loading');
   const [fadeOut, setFadeOut] = React.useState(false);
-  // true → el video se está reproduciendo en SILENCIO porque el navegador bloqueó
-  // el autoplay con audio; se muestra el botón para activarlo.
-  const [needsSound, setNeedsSound] = React.useState(false);
+  const audioRef = React.useRef<HTMLAudioElement>(null);
 
   const finish = React.useCallback(() => {
     if (introCompleted) return;
@@ -48,125 +56,97 @@ export function IntroSplash({ onComplete }: IntroSplashProps) {
   const finishRef = React.useRef(finish);
   finishRef.current = finish;
 
-  // Si la intro ya se reprodujo en este acceso, no la repitas.
   React.useEffect(() => {
-    if (introCompleted) onComplete();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  // Reproducción automática: intenta CON sonido; si el navegador lo bloquea,
-  // reproduce en silencio (sin interrumpir) y marca que se necesita activar audio.
-  const play = React.useCallback(async () => {
-    const video = videoRef.current;
-    if (!video || startedRef.current) return;
-    startedRef.current = true;
-    introStarted = true;
-    try {
-      video.muted = false;
-      video.volume = 1;
-      await video.play();
-      setNeedsSound(false);
-      setPhase('playing');
-    } catch {
-      try {
-        video.muted = true;
-        await video.play();
-        setNeedsSound(true); // reproduce, pero en silencio → ofrecer "Activar sonido"
-        setPhase('playing');
-      } catch {
-        finishRef.current();
-      }
+    if (introCompleted) {
+      onComplete();
+      return;
     }
-  }, []);
+    const reduce =
+      typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const total = reduce ? 1000 : TOTAL_MS;
 
-  // Activa el audio con el gesto del usuario, SIN reiniciar ni recargar.
-  const enableSound = React.useCallback(() => {
-    const video = videoRef.current;
-    if (!video) return;
-    video.muted = false;
-    video.volume = 1;
-    void video.play().catch(() => {});
-    setNeedsSound(false);
-  }, []);
-
-  // Configuración del <video> (solo al montar → nunca se reinicia).
-  React.useEffect(() => {
-    const video = videoRef.current;
-    if (!video || introCompleted) return;
-
-    const onReady = () => void play();
-    const onError = () => finishRef.current();
-    const onEnded = () => {
-      setFadeOut(true);
-      window.setTimeout(() => finishRef.current(), FADE_OUT_MS);
+    // Reproduce el audio de la intro. Se intenta de inmediato; en el APK suena
+    // automáticamente. En navegadores que bloquean el autoplay con sonido, se
+    // reintenta al primer toque/tecla (fallback) sin interrumpir la animación.
+    const a = audioRef.current;
+    const tryPlay = () => {
+      if (a && !reduce) {
+        a.muted = false;
+        a.volume = 1;
+        void a.play().catch(() => {});
+      }
     };
+    tryPlay();
+    const unlock = () => tryPlay();
+    window.addEventListener('pointerdown', unlock, { once: true });
+    window.addEventListener('keydown', unlock, { once: true });
+    window.addEventListener('touchstart', unlock, { once: true });
 
-    video.addEventListener('canplay', onReady, { once: true });
-    video.addEventListener('error', onError);
-    video.addEventListener('ended', onEnded, { once: true });
-    video.load();
-
+    const t1 = window.setTimeout(() => setFadeOut(true), total - FADE_OUT_MS);
+    const t2 = window.setTimeout(() => finishRef.current(), total);
     return () => {
-      video.removeEventListener('canplay', onReady);
-      video.removeEventListener('error', onError);
-      video.removeEventListener('ended', onEnded);
+      window.clearTimeout(t1);
+      window.clearTimeout(t2);
+      window.removeEventListener('pointerdown', unlock);
+      window.removeEventListener('keydown', unlock);
+      window.removeEventListener('touchstart', unlock);
+      if (a) a.pause();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
-    <div
-      className="fixed inset-0 z-[100] flex items-center justify-center overflow-hidden bg-black"
-      style={{ width: '100%', height: '100%' }}
+    <motion.div
+      className="fixed inset-0 z-[100] grid place-items-center overflow-hidden bg-black"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: fadeOut ? 0 : 1 }}
+      transition={{ duration: fadeOut ? FADE_OUT_MS / 1000 : 0.3, ease: 'easeOut' }}
     >
-      {/* Video — a pantalla completa, centrado (object-cover) para una intro premium. */}
-      <motion.video
-        ref={videoRef}
-        playsInline
-        preload="auto"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: fadeOut ? 0 : phase === 'playing' ? 1 : 0 }}
-        transition={{ duration: fadeOut ? FADE_OUT_MS / 1000 : 0.35, ease: 'easeOut' }}
-        className="h-full w-full object-cover object-center"
-        style={{ width: '100%', height: '100%' }}
+      {/* Audio de la intro */}
+      <audio ref={audioRef} src={AUDIO_SRC} preload="auto" />
+
+      {/* Glow ambiental azul detrás del logo */}
+      <motion.div
+        aria-hidden
+        className="pointer-events-none absolute h-[28rem] w-[28rem] rounded-full"
+        style={{ background: 'radial-gradient(circle, rgba(0,168,255,0.16), transparent 65%)' }}
+        initial={{ opacity: 0, scale: 0.7 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 1.2, ease: 'easeOut' }}
+      />
+
+      {/* Partículas tenues */}
+      {PARTICLES.map((p, i) => (
+        <motion.span
+          key={i}
+          aria-hidden
+          className="pointer-events-none absolute rounded-full"
+          style={{ left: p.left, top: p.top, width: p.size, height: p.size, background: '#3DB4FF' }}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: [0, 0.5, 0], y: [-6, -22, -6] }}
+          transition={{ duration: p.dur, delay: p.delay, repeat: Infinity, ease: 'easeInOut' }}
+        />
+      ))}
+
+      {/* Flotación del bloque + glow del logo ensamblado */}
+      <motion.div
+        className="splash-glow relative w-[min(20rem,74vw)]"
+        style={{ aspectRatio: '1 / 1' }}
+        animate={{ y: [0, -4, 0] }}
+        transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut', delay: 2 }}
       >
-        <source src={VIDEO_SRC} type="video/mp4" />
-      </motion.video>
-
-      {/* Botón elegante para activar sonido si el navegador bloqueó el autoplay con audio. */}
-      <AnimatePresence>
-        {phase === 'playing' && needsSound && !fadeOut && (
-          <motion.button
-            type="button"
-            onClick={enableSound}
-            initial={{ opacity: 0, y: 14 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 8 }}
-            transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
-            className="absolute bottom-8 left-1/2 z-20 flex -translate-x-1/2 items-center gap-2 rounded-full bg-white/95 px-6 py-3 text-sm font-semibold text-black shadow-2xl backdrop-blur transition-transform hover:scale-[1.03] active:scale-95 sm:bottom-12"
-          >
-            <span className="relative flex h-2.5 w-2.5">
-              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-brand opacity-60" />
-              <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-brand" />
-            </span>
-            <Volume2 className="h-4 w-4" /> Activar sonido
-          </motion.button>
-        )}
-      </AnimatePresence>
-
-      {/* Carga mínima: solo un spinner discreto sobre negro (sin mensajes). */}
-      <AnimatePresence>
-        {phase === 'loading' && (
+        {LAYERS.map((l) => (
           <motion.div
-            initial={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.4, ease: 'easeInOut' }}
-            className="absolute inset-0 z-10 grid place-items-center bg-black"
+            key={l.src}
+            className="absolute inset-0"
+            initial={{ opacity: 0, y: l.from }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.55, delay: l.delay, ease: EXPO }}
           >
-            <div className="h-9 w-9 animate-spin rounded-full border-2 border-white/15 border-t-white/70" />
+            <Image src={l.src} alt="" fill sizes="320px" priority className="object-contain" />
           </motion.div>
-        )}
-      </AnimatePresence>
-    </div>
+        ))}
+      </motion.div>
+    </motion.div>
   );
 }

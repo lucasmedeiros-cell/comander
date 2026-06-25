@@ -9,6 +9,7 @@ import { SummaryCard } from '@/components/dashboard/SummaryCard';
 import { CompanyRanking } from '@/components/dashboard/CompanyRanking';
 import { OperationalIndicators } from '@/components/dashboard/OperationalIndicators';
 import { CompanyCarousel } from '@/components/dashboard/CompanyCarousel';
+import { BugReportButton } from '@/components/bugs/BugReportButton';
 import { useDataset } from '@/lib/data-provider';
 import { useMounted } from '@/lib/use-mounted';
 import { useVisibleBusinesses, useSelectedBusiness } from '@/lib/business-store';
@@ -125,6 +126,9 @@ export default function InicioPage() {
 
       {/* ───────── 5 · INDICADORES DEL NEGOCIO + GRÁFICA (empresa seleccionada) ───────── */}
       <OperationalIndicators business={selected} transactions={transactions} range={range} />
+
+      {/* Botón flotante para reportar bugs / pedir optimizaciones */}
+      <BugReportButton />
     </div>
   );
 }

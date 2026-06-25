@@ -1,8 +1,6 @@
 'use client';
 
-import * as React from 'react';
-import { Capacitor } from '@capacitor/core';
-import { AudioLines, ExternalLink, FileText, ListChecks, Mic, ScrollText } from 'lucide-react';
+import { AudioLines, ExternalLink, FileText, ListChecks, ScrollText } from 'lucide-react';
 import { PageHeader } from '@/components/dashboard/PageHeader';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -19,14 +17,6 @@ const FEATURES = [
 ];
 
 export default function DorisPage() {
-  const [native, setNative] = React.useState(false);
-  const [mounted, setMounted] = React.useState(false);
-
-  React.useEffect(() => {
-    setNative(Capacitor.isNativePlatform());
-    setMounted(true);
-  }, []);
-
   return (
     <div className="space-y-6">
       <PageHeader
@@ -50,35 +40,15 @@ export default function DorisPage() {
         ))}
       </div>
 
-      {mounted && native ? (
-        // En el APK: abrir en el navegador del sistema (micrófono nativo confiable).
-        <Card className="flex flex-col items-center gap-4 p-10 text-center">
-          <span className="grid h-16 w-16 place-items-center rounded-2xl bg-gradient-to-br from-brand to-purple text-white shadow-lg">
-            <Mic className="h-8 w-8" />
-          </span>
-          <div>
-            <p className="text-base font-bold tracking-tight">Asistente de reuniones</p>
-            <p className="mx-auto mt-1 max-w-sm text-sm text-muted-foreground">
-              Abre Doris para grabar tu reunión; al terminar tendrás la transcripción y el resumen con tareas y decisiones.
-            </p>
-          </div>
-          <Button asChild size="lg">
-            <a href={DORIS_URL} target="_blank" rel="noopener noreferrer">
-              <Mic className="h-5 w-5" /> Abrir Doris
-            </a>
-          </Button>
-        </Card>
-      ) : (
-        // En web: Doris embebido (con permiso de micrófono para grabar).
-        <Card className="overflow-hidden p-0">
-          <iframe
-            src={DORIS_URL}
-            title="Doris"
-            className="h-[72vh] w-full border-0"
-            allow="microphone; clipboard-write; fullscreen"
-          />
-        </Card>
-      )}
+      {/* Doris embebido — se abre en la misma ventana (con permiso de micrófono). */}
+      <Card className="overflow-hidden p-0">
+        <iframe
+          src={DORIS_URL}
+          title="Doris"
+          className="h-[74vh] w-full border-0"
+          allow="microphone; camera; clipboard-write; fullscreen; autoplay"
+        />
+      </Card>
     </div>
   );
 }

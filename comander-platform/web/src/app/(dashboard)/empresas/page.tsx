@@ -86,7 +86,7 @@ export default function EmpresasPage() {
             axis="y"
             values={items}
             onReorder={onReorder}
-            className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3"
+            className="mx-auto flex max-w-2xl flex-col gap-3"
           >
             {items.map((b) => (
               <EmpresaCard
